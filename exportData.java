@@ -1,3 +1,5 @@
+import javafx.scene.control.Dialog;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -68,6 +70,20 @@ public class exportData {
         }
 
 
+    }
+
+    public static void writeSong(Song newSong) {
+        try {
+            File inputFile = new File(importData.importFileLocation());
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(inputFile, true))) {
+                writer.newLine();
+                writer.write(newSong.getSongName() + "\t" + newSong.getArtistName() + "\t" + newSong.getDuration() + "\t" + newSong.getFileName());
+            }
+
+        } catch (IOException e) {
+            DialogBox.box("File not found!");
+        }
     }
 
 }

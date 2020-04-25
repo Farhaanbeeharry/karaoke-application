@@ -17,7 +17,7 @@ public class importData {
 
                 while (data != null) {
                     String[] songPerLine = data.split("\t");
-                    Song readSong = new Song(songPerLine[0], songPerLine[1], Integer.parseInt(songPerLine[2]), songPerLine[3]);
+                    Song readSong = new Song(songPerLine[0], songPerLine[1], Double.parseDouble(songPerLine[2]), songPerLine[3]);
                     songs.put(songPerLine[0], readSong);
                     data = inputBuffer.readLine();
                 }

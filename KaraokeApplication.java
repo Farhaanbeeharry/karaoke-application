@@ -30,8 +30,6 @@ public class KaraokeApplication extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        HashST<String, Song> songs = importData.importSongList();
-
         GridPane mainGrid = new GridPane();
         mainGrid.setAlignment(Pos.CENTER);
         mainGrid.setVgap(20);
@@ -52,6 +50,7 @@ public class KaraokeApplication extends Application {
             playPlaylist.setMinHeight(40);
             playPlaylist.setFocusTraversable(false);
             playPlaylist.setOnAction(e -> {
+                HashST<String, Song> songs = importData.importSongList();
                 if (importData.getPlaylistCount() == 0) {
                     DialogBox.box("There are no songs in your playlist!");
                 } else {
@@ -65,7 +64,8 @@ public class KaraokeApplication extends Application {
             addSongBtn.setMinHeight(40);
             addSongBtn.setFocusTraversable(false);
             addSongBtn.setOnAction(e -> {
-
+                HashST<String, Song> songs = importData.importSongList();
+                AddSong.addToLibrary(songs);
             });
 
             Button listAllBtn = new Button("All songs & My playlist");
@@ -74,6 +74,7 @@ public class KaraokeApplication extends Application {
             listAllBtn.setMinHeight(40);
             listAllBtn.setFocusTraversable(false);
             listAllBtn.setOnAction(e -> {
+                HashST<String, Song> songs = importData.importSongList();
                 tableView.tableView(songs);
             });
 
