@@ -18,6 +18,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.io.File;
 
 public class Player {
 
@@ -27,6 +28,7 @@ public class Player {
     static MediaView mediaView;
     static MediaPlayer mediaPlayer;
     static Label songTitle;
+    static File file;
     static TextField searchField;
     static boolean muteState = false;
 
@@ -72,7 +74,9 @@ public class Player {
         songTitle.setText(songs.get(selectedSong.getSongName()).getSongName() + " - " + songs.get(selectedSong.getSongName()).getArtistName());
         songTitle.setMinWidth(screenWidth - columnWidth);
 
-        media = new Media("file:///home/cst2550/IdeaProjects/KaraokeApplication/src/videos/" + fileName);
+        file = new File("src/videos/" + fileName);
+
+        media = new Media(file.toURI().toString());
         mediaPlayer = new MediaPlayer(media);
         mediaView = new MediaView(mediaPlayer);
         mediaView.setFitWidth(screenWidth - columnWidth);
@@ -101,8 +105,8 @@ public class Player {
         searchField = new TextField();
         searchField.setPromptText("Search for a song ...");
         searchField.setMinHeight(40);
-        searchField.setMinWidth((columnWidth - 95)/3*2);
-        searchField.setMaxWidth((columnWidth - 95)/3*2);
+        searchField.setMinWidth((columnWidth - 95) / 3 * 2);
+        searchField.setMaxWidth((columnWidth - 95) / 3 * 2);
         searchField.setFocusTraversable(false);
         searchField.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
@@ -119,7 +123,7 @@ public class Player {
 
         Button searchBtn = new Button("Search");
         searchBtn.setFocusTraversable(false);
-        searchBtn.setMinWidth((columnWidth - 95)/3*1);
+        searchBtn.setMinWidth((columnWidth - 95) / 3 * 1);
         searchBtn.setMinHeight(40);
         searchBtn.setAlignment(Pos.CENTER);
         searchBtn.setOnAction(e -> {
@@ -133,7 +137,7 @@ public class Player {
 
         Button defaultBtn = new Button("Show all songs");
         defaultBtn.setFocusTraversable(false);
-        defaultBtn.setMinWidth((columnWidth - 95)/2);
+        defaultBtn.setMinWidth((columnWidth - 95) / 2);
         defaultBtn.setMinHeight(40);
         defaultBtn.setAlignment(Pos.CENTER);
         defaultBtn.setOnAction(e -> {
@@ -143,7 +147,7 @@ public class Player {
 
         Button addSongBtn = new Button("Add song to playlist");
         addSongBtn.setFocusTraversable(false);
-        addSongBtn.setMinWidth((columnWidth - 95)/2);
+        addSongBtn.setMinWidth((columnWidth - 95) / 2);
         addSongBtn.setMinHeight(40);
         addSongBtn.setAlignment(Pos.CENTER);
         addSongBtn.setOnAction(e -> {
@@ -178,7 +182,8 @@ public class Player {
                 playlistTable.getSelectionModel().selectFirst();
                 Song newSelectedSong = (Song) playlistTable.getSelectionModel().getSelectedItem();
                 String newFileName = songs.get(newSelectedSong.getSongName()).getFileName();
-                media = new Media("file:///home/cst2550/IdeaProjects/KaraokeApplication/src/videos/" + newFileName);
+                file = new File("src/videos/" + newFileName);
+                media = new Media(file.toURI().toString());
                 mediaPlayer.dispose();
                 mediaPlayer = new MediaPlayer(media);
                 mediaView.setMediaPlayer(mediaPlayer);
