@@ -1,0 +1,3 @@
+Example location for argument !
+
+/home/cst2550/IdeaProjects/KaraokeApplication/src/data/testFile.txt

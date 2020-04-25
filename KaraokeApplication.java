@@ -9,12 +9,19 @@ import javafx.scene.control.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class KaraokeApplication extends Application {
 
     public static void main(String[] args) {
+
+        if (args.length == 0) {
+            exportData.writeLocation("/home/cst2550/IdeaProjects/KaraokeApplication/src/data/songList.txt");
+        } else if (args.length > 1) {
+            System.out.println("Too many arguments!");
+            System.exit(0);
+        } else {
+            exportData.writeLocation(args[0]);
+        }
 
         launch(args);
 

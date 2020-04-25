@@ -1,18 +1,14 @@
 import java.io.*;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 public class importData {
 
     public static HashST<String, Song> importSongList() {
 
-        String fileName = "songList.txt";
         HashST<String, Song> songs = new HashST<String, Song>();
 
         try {
-            FileReader inputFile = new FileReader("/home/cst2550/IdeaProjects/KaraokeApplication/src/data/" + fileName);
+            FileReader inputFile = new FileReader(importFileLocation());
 
             try (BufferedReader inputBuffer = new BufferedReader(inputFile)) {
 
@@ -27,7 +23,8 @@ public class importData {
                 }
             }
         } catch (IOException e) {
-            System.out.println(e);
+            System.out.println("Invalid Location");
+            System.exit(0);
         }
 
         return songs;
@@ -65,6 +62,28 @@ public class importData {
     public static int getPlaylistCount() {
         LinkedList<String> playlist = getPlaylist();
         return playlist.size();
+    }
+
+    public static String importFileLocation() {
+
+        String fileName = "fileLocation.txt";
+        String data = "";
+
+        try {
+            FileReader inputFile = new FileReader("/home/cst2550/IdeaProjects/KaraokeApplication/src/data/" + fileName);
+
+            try (BufferedReader inputBuffer = new BufferedReader(inputFile)) {
+
+
+                data = inputBuffer.readLine();
+
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+        return data;
+
     }
 
 }

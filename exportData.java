@@ -53,4 +53,21 @@ public class exportData {
         }
     }
 
+    public static void writeLocation(String fileLocation) {
+
+
+        try {
+            File outputFile = new File("/home/cst2550/IdeaProjects/KaraokeApplication/src/data/fileLocation.txt");
+            try (PrintStream writer = new PrintStream(outputFile)) {
+
+                writer.print(fileLocation);
+
+                }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found!");
+        }
+
+
+    }
+
 }
