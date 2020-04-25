@@ -97,6 +97,11 @@ public class KaraokeApplication extends Application {
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.setMaximized(true);
+        primaryStage.setOnCloseRequest(e -> {
+            e.consume();
+            primaryStage.close();
+            System.exit(0);
+        });
         primaryStage.show();
 
     }

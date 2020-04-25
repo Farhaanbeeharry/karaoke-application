@@ -1,13 +1,13 @@
-import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -17,20 +17,24 @@ import javafx.scene.media.MediaView;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import javax.swing.*;
-import java.beans.JavaBean;
 import java.util.ArrayList;
 
 public class Player {
 
     static Stage mediaPlayerStage;
-    static TableView playlistTable;
+    static TableView playlistTable, allSongTable;
+    static Media media;
+    static MediaView mediaView;
     static MediaPlayer mediaPlayer;
+    static Label songTitle;
+    static TextField searchField;
+    static boolean muteState = false;
 
     public static void playPlaylist(HashST<String, Song> songs) {
 
         ArrayList<String> playlist = importData.getPlaylist();
         mediaPlayerStage = new Stage();
+
 
         double screenWidth = Screen.getPrimary().getBounds().getWidth();
         double columnWidth = screenWidth / 4;
@@ -64,52 +68,128 @@ public class Player {
         gridPane.setAlignment(Pos.CENTER);
         gridPane.setVgap(20);
 
-        Label songTitle = new Label();
+        songTitle = new Label();
         songTitle.setText(songs.get(selectedSong.getSongName()).getSongName() + " - " + songs.get(selectedSong.getSongName()).getArtistName());
         songTitle.setMinWidth(screenWidth - columnWidth);
 
-        Media media = new Media("file:///home/cst2550/IdeaProjects/KaraokeApplication/src/videos/" + fileName);
+        media = new Media("file:///home/cst2550/IdeaProjects/KaraokeApplication/src/videos/" + fileName);
         mediaPlayer = new MediaPlayer(media);
-        MediaView mediaView = new MediaView(mediaPlayer);
+        mediaView = new MediaView(mediaPlayer);
         mediaView.setFitWidth(screenWidth - columnWidth);
 
-        Button addSongBtn = new Button("Add a song to playlist");
+        try {
+            TableColumn<Song, String> songNameColumn = new TableColumn<>("Songs");
+            songNameColumn.setCellValueFactory(new PropertyValueFactory<>("songName"));
+            songNameColumn.setMinWidth(columnWidth - 85);
+            songNameColumn.setResizable(false);
+            songNameColumn.setSortable(false);
+
+            allSongTable = new TableView<>();
+            allSongTable.setFocusTraversable(false);
+            allSongTable.setMaxWidth(columnWidth);
+            allSongTable.setEditable(false);
+            allSongTable.prefHeightProperty().bind(mediaPlayerStage.heightProperty());
+            allSongTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+            getDefaultList(songs);
+
+            allSongTable.getColumns().addAll(songNameColumn);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        searchField = new TextField();
+        searchField.setPromptText("Search for a song ...");
+        searchField.setMinHeight(40);
+        searchField.setMinWidth((columnWidth - 95)/3*2);
+        searchField.setMaxWidth((columnWidth - 95)/3*2);
+        searchField.setFocusTraversable(false);
+        searchField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyPressed) {
+                if (keyPressed.getCode().equals(KeyCode.ENTER)) {
+                    if (!searchField.getText().matches("")) {
+                        searchSongName(songs, searchField.getText());
+                    } else {
+                        getDefaultList(songs);
+                    }
+                }
+            }
+        });
+
+        Button searchBtn = new Button("Search");
+        searchBtn.setFocusTraversable(false);
+        searchBtn.setMinWidth((columnWidth - 95)/3*1);
+        searchBtn.setMinHeight(40);
+        searchBtn.setAlignment(Pos.CENTER);
+        searchBtn.setOnAction(e -> {
+            if (searchField.getText().matches("")) {
+                getDefaultList(songs);
+            } else {
+                searchSongName(songs, searchField.getText());
+            }
+        });
+
+
+        Button defaultBtn = new Button("Show all songs");
+        defaultBtn.setFocusTraversable(false);
+        defaultBtn.setMinWidth((columnWidth - 95)/2);
+        defaultBtn.setMinHeight(40);
+        defaultBtn.setAlignment(Pos.CENTER);
+        defaultBtn.setOnAction(e -> {
+            gridPane.requestFocus();
+            getDefaultList(songs);
+        });
+
+        Button addSongBtn = new Button("Add song to playlist");
         addSongBtn.setFocusTraversable(false);
-        addSongBtn.setMinWidth(300);
+        addSongBtn.setMinWidth((columnWidth - 95)/2);
         addSongBtn.setMinHeight(40);
         addSongBtn.setAlignment(Pos.CENTER);
         addSongBtn.setOnAction(e -> {
-            mediaPlayer.stop();
-            mediaPlayerStage.close();
-            tableView.tableView(songs);
+            gridPane.requestFocus();
+            int getSelectionTable = allSongTable.getSelectionModel().getSelectedIndex();
+            if (getSelectionTable != -1) {
+                Song selectedAddSong = (Song) allSongTable.getSelectionModel().getSelectedItem();
+                String selectedSongName = selectedAddSong.getSongName();
+                if (checkExistInPlaylist(selectedSongName) == 0) {
+                    exportData.addToPlaylist(selectedSongName);
+                    refreshPlaylist();
+                } else {
+                    DialogBox.box("Song is already in playlist!\nSelect another song to add to the playlist!!");
+                }
+            } else {
+                DialogBox.box("No song selected!\nSelect a song to add to the playlist!");
+            }
         });
 
         Button deleteBtn = new Button("Delete from playlist");
         deleteBtn.setFocusTraversable(false);
-        deleteBtn.setMinWidth(300);
+        deleteBtn.setMinWidth(columnWidth - 85);
         deleteBtn.setMinHeight(40);
         deleteBtn.setAlignment(Pos.CENTER);
         deleteBtn.setOnAction(e -> {
+            gridPane.requestFocus();
             int getSelectionPlaylist = playlistTable.getSelectionModel().getSelectedIndex();
-                if (getSelectionPlaylist == 0) {
-                    deleteFromPlaylist(getSelectionPlaylist);
-                    refreshPlaylist();
-                    mediaPlayer.stop();
-                    playlistTable.getSelectionModel().selectFirst();
-                    Song newSelectedSong = (Song) playlistTable.getSelectionModel().getSelectedItem();
-                    String newFileName = songs.get(newSelectedSong.getSongName()).getFileName();
-                    Media nextMedia = new Media("file:///home/cst2550/IdeaProjects/KaraokeApplication/src/videos/" + newFileName);
-                    mediaPlayer.dispose();
-                    mediaPlayer = new MediaPlayer(nextMedia);
-                    mediaView.setMediaPlayer(mediaPlayer);
-                    mediaPlayer.play();
-                    songTitle.setText(songs.get(newSelectedSong.getSongName()).getSongName() + " - " + songs.get(newSelectedSong.getSongName()).getArtistName());
-                } else if (getSelectionPlaylist > 0) {
-                    deleteFromPlaylist(getSelectionPlaylist);
-                    refreshPlaylist();
-                    playlistTable.getSelectionModel().selectFirst();
+            if (getSelectionPlaylist == 0) {
+                deleteFromPlaylist(getSelectionPlaylist);
+                refreshPlaylist();
+                mediaPlayer.stop();
+                playlistTable.getSelectionModel().selectFirst();
+                Song newSelectedSong = (Song) playlistTable.getSelectionModel().getSelectedItem();
+                String newFileName = songs.get(newSelectedSong.getSongName()).getFileName();
+                media = new Media("file:///home/cst2550/IdeaProjects/KaraokeApplication/src/videos/" + newFileName);
+                mediaPlayer.dispose();
+                mediaPlayer = new MediaPlayer(media);
+                mediaView.setMediaPlayer(mediaPlayer);
+                mediaPlayer.play();
+                songTitle.setText(songs.get(newSelectedSong.getSongName()).getSongName() + " - " + songs.get(newSelectedSong.getSongName()).getArtistName());
+            } else if (getSelectionPlaylist > 0) {
+                deleteFromPlaylist(getSelectionPlaylist);
+                refreshPlaylist();
+                playlistTable.getSelectionModel().selectFirst();
 
-                } else {
+            } else {
                 DialogBox.box("No song selected!\nSelect a song to remove from the playlist!");
             }
             if (importData.getPlaylistCount() == 0) {
@@ -121,7 +201,7 @@ public class Player {
 
         Button backBtn = new Button("Back");
         backBtn.setFocusTraversable(false);
-        backBtn.setMinWidth(300);
+        backBtn.setMinWidth(columnWidth - 85);
         backBtn.setMinHeight(40);
         backBtn.setAlignment(Pos.CENTER);
         backBtn.setOnAction(e -> {
@@ -129,22 +209,23 @@ public class Player {
             mediaPlayerStage.close();
         });
 
-        Button pauseBtn = new Button("Pause");
+        Button pauseBtn = new Button();
+        pauseBtn.setText("Pause");
         pauseBtn.setFocusTraversable(false);
         pauseBtn.setMinWidth(100);
         pauseBtn.setMinHeight(40);
         pauseBtn.setAlignment(Pos.CENTER);
         pauseBtn.setOnAction(e -> {
-            mediaPlayer.pause();
-        });
 
-        Button playBtn = new Button("Play");
-        playBtn.setFocusTraversable(false);
-        playBtn.setMinWidth(100);
-        playBtn.setMinHeight(40);
-        playBtn.setAlignment(Pos.CENTER);
-        playBtn.setOnAction(e -> {
-            mediaPlayer.play();
+            MediaPlayer.Status status = mediaPlayer.getStatus();
+
+            if (status == MediaPlayer.Status.PLAYING) {
+                mediaPlayer.pause();
+                pauseBtn.setText("Play");
+            } else {
+                mediaPlayer.play();
+                pauseBtn.setText("Pause");
+            }
         });
 
         Button stopBtn = new Button("Stop");
@@ -162,23 +243,7 @@ public class Player {
         nextBtn.setMinHeight(40);
         nextBtn.setAlignment(Pos.CENTER);
         nextBtn.setOnAction(e -> {
-            if (importData.getPlaylistCount() != 1) {
-                mediaPlayer.stop();
-                int getSelectionPlaylist = playlistTable.getSelectionModel().getSelectedIndex();
-                deleteFromPlaylist(getSelectionPlaylist);
-                refreshPlaylist();
-                playlistTable.getSelectionModel().selectFirst();
-                Song newSelectedSong = (Song) playlistTable.getSelectionModel().getSelectedItem();
-                String newFileName = songs.get(newSelectedSong.getSongName()).getFileName();
-                Media nextMedia = new Media("file:///home/cst2550/IdeaProjects/KaraokeApplication/src/videos/" + newFileName);
-                mediaPlayer.dispose();
-                mediaPlayer = new MediaPlayer(nextMedia);
-                mediaView.setMediaPlayer(mediaPlayer);
-                mediaPlayer.play();
-                songTitle.setText(songs.get(newSelectedSong.getSongName()).getSongName() + " - " + songs.get(newSelectedSong.getSongName()).getArtistName());
-            } else if (importData.getPlaylistCount() == 1) {
-                DialogBox.box("There is no next media to play!\nAdd more songs to the playlist first!");
-            }
+            nextButtonActon(songs);
         });
 
         Button muteBtn = new Button("Mute");
@@ -187,16 +252,16 @@ public class Player {
         muteBtn.setMinWidth(100);
         muteBtn.setAlignment(Pos.CENTER);
         muteBtn.setOnAction(e -> {
-            mediaPlayer.setMute(true);
-        });
 
-        Button unmuteBtn = new Button("Unmute");
-        unmuteBtn.setFocusTraversable(false);
-        unmuteBtn.setMinHeight(40);
-        unmuteBtn.setMinWidth(100);
-        unmuteBtn.setAlignment(Pos.CENTER);
-        unmuteBtn.setOnAction(e -> {
-            mediaPlayer.setMute(false);
+            if (!muteState) {
+                mediaPlayer.setMute(true);
+                muteBtn.setText("Unmute");
+                muteState = !muteState;
+            } else {
+                mediaPlayer.setMute(false);
+                muteBtn.setText("Mute");
+                muteState = !muteState;
+            }
         });
 
         VBox playerBox = new VBox();
@@ -207,7 +272,7 @@ public class Player {
         HBox mediaBtnBox = new HBox(20);
         mediaBtnBox.setAlignment(Pos.CENTER);
         mediaBtnBox.setPadding(new Insets(25, 0, 0, 0));
-        mediaBtnBox.getChildren().addAll(pauseBtn, playBtn, stopBtn, nextBtn, muteBtn, unmuteBtn);
+        mediaBtnBox.getChildren().addAll(pauseBtn, stopBtn, nextBtn, muteBtn);
 
         VBox mediaVBox = new VBox(20);
         mediaVBox.setAlignment(Pos.CENTER);
@@ -216,23 +281,38 @@ public class Player {
 
         VBox listBox = new VBox();
         listBox.setAlignment(Pos.CENTER);
+        listBox.setMaxHeight(400);
         listBox.getChildren().add(playlistTable);
+
+        VBox allSongsBox = new VBox();
+        allSongsBox.setAlignment(Pos.CENTER);
+        allSongsBox.setMaxHeight(400);
+        allSongsBox.getChildren().add(allSongTable);
+
+        HBox searchBox = new HBox(20);
+        searchBox.setAlignment(Pos.CENTER);
+        searchBox.getChildren().addAll(searchField, searchBtn);
+
+        HBox btnBox = new HBox(20);
+        btnBox.setAlignment(Pos.CENTER);
+        btnBox.getChildren().addAll(defaultBtn, addSongBtn);
 
         VBox playlistBtnBox = new VBox(20);
         playlistBtnBox.setAlignment(Pos.CENTER);
         playlistBtnBox.setPadding(new Insets(0, 0, 20, 0));
-        playlistBtnBox.getChildren().addAll(addSongBtn, deleteBtn, backBtn);
+        playlistBtnBox.getChildren().addAll(searchBox, btnBox, deleteBtn, backBtn);
 
         VBox leftPaneBox = new VBox(20);
         leftPaneBox.setAlignment(Pos.CENTER);
         leftPaneBox.setPadding(new Insets(20, 0, 0, 20));
-        leftPaneBox.getChildren().addAll(listBox, playlistBtnBox);
+        leftPaneBox.getChildren().addAll(listBox, allSongsBox, playlistBtnBox);
 
         HBox windowBox = new HBox(20);
         windowBox.setAlignment(Pos.CENTER);
         windowBox.getChildren().addAll(leftPaneBox, mediaVBox);
 
         gridPane.add(windowBox, 0, 0);
+        gridPane.requestFocus();
 
         Scene scene = new Scene(gridPane);
 
@@ -250,24 +330,39 @@ public class Player {
         mediaPlayer.play();
 
         mediaPlayer.setOnEndOfMedia(() -> {
-            mediaPlayer.stop();
-            mediaPlayer.dispose();
-            int getSelectionPlaylist = playlistTable.getSelectionModel().getSelectedIndex();
-            deleteFromPlaylist(getSelectionPlaylist);
-            refreshPlaylist();
-            playlistTable.getSelectionModel().selectFirst();
-            Song newSelectedSong = (Song) playlistTable.getSelectionModel().getSelectedItem();
-            String newFileName = songs.get(newSelectedSong.getSongName()).getFileName();
-            Media nextMedia = new Media("file:///home/cst2550/IdeaProjects/KaraokeApplication/src/videos/" + newFileName);
-            mediaPlayer.dispose();
-            mediaPlayer = new MediaPlayer(nextMedia);
-            mediaView.setMediaPlayer(mediaPlayer);
-            mediaPlayer.play();
-            songTitle.setText(songs.get(newSelectedSong.getSongName()).getSongName() + " - " + songs.get(newSelectedSong.getSongName()).getArtistName());
-
+            nextButtonActon(songs);
         });
 
     }
+
+    private static void nextButtonActon(HashST<String, Song> songs) {
+        if (importData.getPlaylistCount() > 1) {
+            mediaPlayer.stop();
+            mediaPlayer.dispose();
+            playlistTable.getSelectionModel().select(1);
+            int getSelectionPlaylist = playlistTable.getSelectionModel().getSelectedIndex();
+            Song newSelectedSong = (Song) playlistTable.getSelectionModel().getSelectedItem();
+            String newFileName = songs.get(newSelectedSong.getSongName()).getFileName();
+            deleteFromPlaylist(0);
+            refreshPlaylist();
+            playlistTable.getSelectionModel().select(0);
+            media = new Media("file:///home/cst2550/IdeaProjects/KaraokeApplication/src/videos/" + newFileName);
+            mediaPlayer = new MediaPlayer(media);
+            mediaView.setMediaPlayer(mediaPlayer);
+            mediaPlayer.play();
+            mediaPlayer.setOnEndOfMedia(() -> {
+                nextButtonActon(songs);
+            });
+            songTitle.setText(songs.get(newSelectedSong.getSongName()).getSongName() + " - " + songs.get(newSelectedSong.getSongName()).getArtistName());
+        } else if (importData.getPlaylistCount() == 1) {
+            mediaPlayer.stop();
+            mediaPlayer.dispose();
+            mediaPlayerStage.close();
+            deleteFromPlaylist(0);
+            DialogBox.box("There is no song in your playlist!");
+        }
+    }
+
 
     public static void refreshPlaylist() {
 
@@ -286,5 +381,54 @@ public class Player {
         playlist.remove(indexToDelete);
         exportData.updateFile("playlist.txt", playlist);
     }
+
+    public static void searchSongName(HashST<String, Song> songs, String criteria) {
+
+        allSongTable.getItems().clear();
+
+        ObservableList<Song> song = FXCollections.observableArrayList();
+
+        for (String songName : songs.keys()) {
+
+            if (songName.toLowerCase().contains(criteria.toLowerCase())) {
+                song.add(songs.get(songName));
+            }
+
+        }
+
+        allSongTable.setItems(song);
+
+    }
+
+
+    public static void getDefaultList(HashST<String, Song> songs) {
+
+        allSongTable.getItems().clear();
+
+        ObservableList<Song> song = FXCollections.observableArrayList();
+
+        for (String songName : songs.keys()) {
+            song.add(songs.get(songName));
+
+        }
+
+        allSongTable.setItems(song);
+
+
+    }
+
+    public static int checkExistInPlaylist(String songName) {
+
+        ArrayList<String> playlist = importData.getPlaylist();
+
+        for (int i = 0; i < playlist.size(); i++) {
+            if (playlist.get(i).equalsIgnoreCase(songName)) {
+                return 1;
+            }
+        }
+
+        return 0;
+    }
+
 
 }
