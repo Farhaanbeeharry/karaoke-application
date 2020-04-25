@@ -2,6 +2,7 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class importData {
 
@@ -33,10 +34,11 @@ public class importData {
 
     }
 
-    public static ArrayList<String> getPlaylist() {
+    public static LinkedList<String> getPlaylist() {
 
         String fileName = "playlist.txt";
-        ArrayList<String> playlist = new ArrayList<String>();
+
+        LinkedList<String> playlist = new LinkedList<String>();
 
         try {
             FileReader inputFile = new FileReader("/home/cst2550/IdeaProjects/KaraokeApplication/src/data/" + fileName);
@@ -61,7 +63,7 @@ public class importData {
     }
 
     public static int getPlaylistCount() {
-        ArrayList<String> playlist = getPlaylist();
+        LinkedList<String> playlist = getPlaylist();
         return playlist.size();
     }
 

@@ -15,6 +15,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 
 public class tableView {
@@ -155,7 +156,7 @@ public class tableView {
             if (importData.getPlaylistCount() == 0) {
                 DialogBox.box("Playlist is already empty!");
             } else {
-                ArrayList<String> playlist = importData.getPlaylist();
+                LinkedList<String> playlist = importData.getPlaylist();
                 playlist.clear();
                 exportData.updateFile("playlist.txt", playlist);
                 refreshPlaylist();
@@ -264,7 +265,7 @@ public class tableView {
 
     public static void refreshPlaylist() {
 
-        ArrayList<String> playlist = importData.getPlaylist();
+        LinkedList<String> playlist = importData.getPlaylist();
 
         playlistTable.getItems().clear();
 
@@ -275,14 +276,14 @@ public class tableView {
     }
 
     public static void deleteFromPlaylist(int indexToDelete) {
-        ArrayList<String> playlist = importData.getPlaylist();
+        LinkedList<String> playlist = importData.getPlaylist();
         playlist.remove(indexToDelete);
         exportData.updateFile("playlist.txt", playlist);
     }
 
     public static int checkExistInPlaylist(String songName) {
 
-        ArrayList<String> playlist = importData.getPlaylist();
+        LinkedList<String> playlist = importData.getPlaylist();
 
         for (int i = 0; i < playlist.size(); i++) {
             if (playlist.get(i).equalsIgnoreCase(songName)) {

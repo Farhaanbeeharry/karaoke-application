@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class exportData {
 
@@ -32,7 +33,7 @@ public class exportData {
 
     }
 
-    public static void updateFile(String fileName, ArrayList<String> playlist) {
+    public static void updateFile(String fileName, LinkedList<String> playlist) {
         try {
             File outputFile = new File("/home/cst2550/IdeaProjects/KaraokeApplication/src/data/" + fileName);
             try (PrintStream writer = new PrintStream(outputFile)) {

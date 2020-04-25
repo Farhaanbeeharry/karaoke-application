@@ -1,3 +1,7 @@
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -14,11 +18,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.io.File;
+import java.util.LinkedList;
 
 public class Player {
 
@@ -30,13 +37,15 @@ public class Player {
     static Label songTitle;
     static File file;
     static TextField searchField;
+    static Slider timeSlider, volumeSlider;
     static boolean muteState = false;
+    static double volume = 100;
 
     public static void playPlaylist(HashST<String, Song> songs) {
 
-        ArrayList<String> playlist = importData.getPlaylist();
         mediaPlayerStage = new Stage();
 
+        LinkedList<String> playlist = importData.getPlaylist();
 
         double screenWidth = Screen.getPrimary().getBounds().getWidth();
         double columnWidth = screenWidth / 4;
@@ -239,6 +248,13 @@ public class Player {
         stopBtn.setMinHeight(40);
         stopBtn.setAlignment(Pos.CENTER);
         stopBtn.setOnAction(e -> {
+
+            MediaPlayer.Status status = mediaPlayer.getStatus();
+
+            if (status == MediaPlayer.Status.PLAYING) {
+                mediaPlayer.pause();
+                pauseBtn.setText("Play");
+            }
             mediaPlayer.stop();
         });
 
@@ -248,7 +264,7 @@ public class Player {
         nextBtn.setMinHeight(40);
         nextBtn.setAlignment(Pos.CENTER);
         nextBtn.setOnAction(e -> {
-            nextButtonActon(songs);
+            nextButtonAction(songs, playlist);
         });
 
         Button muteBtn = new Button("Mute");
@@ -269,20 +285,56 @@ public class Player {
             }
         });
 
+        timeSlider = new Slider();
+        timeSlider.setFocusTraversable(false);
+        timeSlider.setShowTickLabels(true);
+        timeSlider.setShowTickMarks(false);
+        timeSlider.setMajorTickUnit(60);
+        timeSlider.setMinWidth(screenWidth - columnWidth - 75);
+        timeSlider.setMaxWidth(screenWidth - columnWidth - 75);
+
+        refreshTimeSlider();
+
+        Text volumeText = new Text();
+        volumeText.setText("Volume:");
+
+        volumeSlider = new Slider();
+        volumeSlider.setFocusTraversable(false);
+        volumeSlider.setShowTickLabels(false);
+        volumeSlider.setShowTickMarks(false);
+        volumeSlider.setMajorTickUnit(100);
+        volumeSlider.setMinWidth(200);
+        volumeSlider.setMaxWidth(200);
+        volumeSlider.setMin(0);
+        volumeSlider.setMax(100);
+        volumeSlider.setValue(volume);
+
+        refreshVolumeSlider();
+
         VBox playerBox = new VBox();
         playerBox.setAlignment(Pos.CENTER);
         playerBox.setPadding(new Insets(0, 20, 0, 0));
         playerBox.getChildren().add(mediaView);
 
+        HBox volumeBox = new HBox(20);
+        volumeBox.setAlignment(Pos.CENTER);
+        volumeBox.setPadding(new Insets(0, 0, 0, 50));
+        volumeBox.getChildren().addAll(volumeText, volumeSlider);
+
         HBox mediaBtnBox = new HBox(20);
         mediaBtnBox.setAlignment(Pos.CENTER);
-        mediaBtnBox.setPadding(new Insets(25, 0, 0, 0));
-        mediaBtnBox.getChildren().addAll(pauseBtn, stopBtn, nextBtn, muteBtn);
+        mediaBtnBox.setPadding(new Insets(0, 0, 0, 0));
+        mediaBtnBox.getChildren().addAll(pauseBtn, stopBtn, nextBtn, muteBtn, volumeBox);
+
+        HBox sliderBox = new HBox();
+        sliderBox.setAlignment(Pos.CENTER);
+        sliderBox.setPadding(new Insets(0, 20, 0, 0));
+        sliderBox.getChildren().add(timeSlider);
 
         VBox mediaVBox = new VBox(20);
         mediaVBox.setAlignment(Pos.CENTER);
         mediaVBox.setPadding(new Insets(0, 0, 60, 0));
-        mediaVBox.getChildren().addAll(songTitle, playerBox, mediaBtnBox);
+        mediaVBox.getChildren().addAll(songTitle, playerBox, sliderBox, mediaBtnBox);
 
         VBox listBox = new VBox();
         listBox.setAlignment(Pos.CENTER);
@@ -335,12 +387,56 @@ public class Player {
         mediaPlayer.play();
 
         mediaPlayer.setOnEndOfMedia(() -> {
-            nextButtonActon(songs);
+            nextButtonAction(songs, playlist);
         });
 
     }
 
-    private static void nextButtonActon(HashST<String, Song> songs) {
+    private static void refreshVolumeSlider() {
+
+        mediaPlayer.setVolume(volume / 100);
+
+        volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                if (volumeSlider.isPressed()) {
+                    mediaPlayer.setVolume(volumeSlider.getValue() / 100);
+                    volume = volumeSlider.getValue();
+                }
+            }
+        });
+
+    }
+
+    private static void refreshTimeSlider() {
+
+        mediaPlayer.setOnReady(() -> {
+            timeSlider.setMin(0);
+            timeSlider.setMax(mediaPlayer.getMedia().getDuration().toSeconds());
+            timeSlider.setValue(0);
+        });
+
+        mediaPlayer.currentTimeProperty().addListener(new ChangeListener<Duration>() {
+            @Override
+            public void changed(ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue) {
+                Duration duration = mediaPlayer.getCurrentTime();
+
+                timeSlider.setValue(duration.toSeconds());
+            }
+        });
+
+        timeSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                if (timeSlider.isPressed()) {
+                    double val = timeSlider.getValue();
+                    mediaPlayer.seek(new Duration(val * 1000));
+                }
+            }
+        });
+    }
+
+    private static void nextButtonAction(HashST<String, Song> songs, LinkedList<String> playlist) {
         if (importData.getPlaylistCount() > 1) {
             mediaPlayer.stop();
             mediaPlayer.dispose();
@@ -348,15 +444,18 @@ public class Player {
             int getSelectionPlaylist = playlistTable.getSelectionModel().getSelectedIndex();
             Song newSelectedSong = (Song) playlistTable.getSelectionModel().getSelectedItem();
             String newFileName = songs.get(newSelectedSong.getSongName()).getFileName();
-            deleteFromPlaylist(0);
+            playlist.removeFirst();
+            exportData.updateFile("playlist.txt", playlist);
             refreshPlaylist();
             playlistTable.getSelectionModel().select(0);
             media = new Media("file:///home/cst2550/IdeaProjects/KaraokeApplication/src/videos/" + newFileName);
             mediaPlayer = new MediaPlayer(media);
             mediaView.setMediaPlayer(mediaPlayer);
             mediaPlayer.play();
+            refreshTimeSlider();
+            refreshVolumeSlider();
             mediaPlayer.setOnEndOfMedia(() -> {
-                nextButtonActon(songs);
+                nextButtonAction(songs, playlist);
             });
             songTitle.setText(songs.get(newSelectedSong.getSongName()).getSongName() + " - " + songs.get(newSelectedSong.getSongName()).getArtistName());
         } else if (importData.getPlaylistCount() == 1) {
@@ -371,7 +470,7 @@ public class Player {
 
     public static void refreshPlaylist() {
 
-        ArrayList<String> playlist = importData.getPlaylist();
+        LinkedList<String> playlist = importData.getPlaylist();
 
         playlistTable.getItems().clear();
 
@@ -382,7 +481,7 @@ public class Player {
     }
 
     public static void deleteFromPlaylist(int indexToDelete) {
-        ArrayList<String> playlist = importData.getPlaylist();
+        LinkedList<String> playlist = importData.getPlaylist();
         playlist.remove(indexToDelete);
         exportData.updateFile("playlist.txt", playlist);
     }
@@ -424,7 +523,7 @@ public class Player {
 
     public static int checkExistInPlaylist(String songName) {
 
-        ArrayList<String> playlist = importData.getPlaylist();
+        LinkedList<String> playlist = importData.getPlaylist();
 
         for (int i = 0; i < playlist.size(); i++) {
             if (playlist.get(i).equalsIgnoreCase(songName)) {
