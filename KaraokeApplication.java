@@ -20,10 +20,14 @@ public class KaraokeApplication extends Application {
             System.out.println("Too many arguments!");
             System.exit(0);
         } else {
-            exportData.writeLocation(args[0]);
-        }
+	exportData.writeLocation(args[0]);
+	HashST<String, Song> songs = importData.importSongList();
+            
+            
+          }
 
         launch(args);
+
 
     }
 

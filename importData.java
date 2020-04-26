@@ -21,6 +21,9 @@ public class importData {
                     songs.put(songPerLine[0], readSong);
                     data = inputBuffer.readLine();
                 }
+            }catch (Exception e) {
+                System.out.println("File is not compatible with this app!");
+System.exit(0);
             }
         } catch (IOException e) {
             System.out.println("Invalid Location");
@@ -30,6 +33,8 @@ public class importData {
         return songs;
 
     }
+
+   
 
     public static LinkedList<String> getPlaylist() {
 

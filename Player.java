@@ -83,7 +83,7 @@ public class Player {
         songTitle.setText(songs.get(selectedSong.getSongName()).getSongName() + " - " + songs.get(selectedSong.getSongName()).getArtistName());
         songTitle.setMinWidth(screenWidth - columnWidth);
 
-        file = new File("src/videos/" + fileName);
+        file = new File("videos/" + fileName);
 
         media = new Media(file.toURI().toString());
         mediaPlayer = new MediaPlayer(media);
@@ -191,7 +191,7 @@ public class Player {
                 playlistTable.getSelectionModel().selectFirst();
                 Song newSelectedSong = (Song) playlistTable.getSelectionModel().getSelectedItem();
                 String newFileName = songs.get(newSelectedSong.getSongName()).getFileName();
-                file = new File("src/videos/" + newFileName);
+                file = new File("videos/" + newFileName);
                 media = new Media(file.toURI().toString());
                 mediaPlayer.dispose();
                 mediaPlayer = new MediaPlayer(media);
