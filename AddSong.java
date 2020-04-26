@@ -3,8 +3,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -22,7 +22,6 @@ import java.nio.file.Files;
 
 public class AddSong {
 
-
     static boolean proceed = false;
     static Text duration;
     static Stage addStage;
@@ -31,7 +30,9 @@ public class AddSong {
     static File selectedFile;
     static Media media;
     static MediaView mediaView;
+    static Button addBtn;
     static MediaPlayer mediaPlayer;
+    static VBox fullBox;
 
     public static void addToLibrary(HashST<String, Song> songs) {
 
@@ -90,7 +91,7 @@ public class AddSong {
                 if (valid == 1) {
                     proceed = true;
                     getDuration(selectedFile.getPath());
-                } else if (valid == 2){
+                } else if (valid == 2) {
                     duration.setText("Invalid format! Choose another file!");
                 } else if (valid == 3) {
                     duration.setText("File already exists!");
@@ -98,25 +99,6 @@ public class AddSong {
             }
         });
 
-        Button addBtn = new Button("Add");
-        addBtn.setAlignment(Pos.CENTER);
-        addBtn.setMinHeight(40);
-        addBtn.setMinWidth(400);
-        addBtn.setFocusTraversable(false);
-        addBtn.setOnAction(e -> {
-            if (!songNameField.getText().matches("") && !artistNameField.getText().matches("") && proceed) {
-                double videoDuration = Double.parseDouble(duration.getText());
-                Song newSong = new Song(songNameField.getText(), artistNameField.getText(), videoDuration, selectedFile.getName());
-                copyFile(selectedFile.getPath(), selectedFile.getName());
-                exportData.writeSong(newSong);
-                addStage.close();
-                DialogBox.box("New Song added successfully !\nAdd song to your playlist to play !");
-            } else if (!proceed){
-                DialogBox.box("Please check file upload !");
-            } else {
-                DialogBox.box("Please fill all fields !");
-            }
-        });
 
         Button cancelBtn = new Button("Cancel");
         cancelBtn.setAlignment(Pos.CENTER);
@@ -125,6 +107,30 @@ public class AddSong {
         cancelBtn.setFocusTraversable(false);
         cancelBtn.setOnAction(e -> {
             addStage.close();
+        });
+
+
+        addBtn = new Button("Add");
+        addBtn.setAlignment(Pos.CENTER);
+        addBtn.setMinHeight(40);
+        addBtn.setMinWidth(400);
+        addBtn.setFocusTraversable(false);
+        addBtn.setOnAction(e -> {
+            if (!songNameField.getText().matches("") && !artistNameField.getText().matches("") && proceed) {
+                double videoDuration = Double.parseDouble(duration.getText());
+                Song newSong = new Song(songNameField.getText(), artistNameField.getText(), videoDuration, selectedFile.getName());
+                fullBox.getChildren().remove(cancelBtn);
+                addBtn.setText("Please while ... video file uploading !");
+                copyFile(selectedFile.getPath(), selectedFile.getName());
+                exportData.writeSong(newSong);
+                addStage.close();
+                DialogBox.box("Song successfully added to library !");
+
+            } else if (!proceed) {
+                DialogBox.box("Please check file upload !");
+            } else {
+                DialogBox.box("Please fill all fields !");
+            }
         });
 
         HBox songNameBox = new HBox(20);
@@ -139,7 +145,7 @@ public class AddSong {
         durationBox.setAlignment(Pos.CENTER);
         durationBox.getChildren().addAll(durationText, duration);
 
-        VBox fullBox = new VBox(20);
+        fullBox = new VBox(20);
         fullBox.setAlignment(Pos.CENTER);
         fullBox.getChildren().addAll(songNameBox, artistNameBox, chooseFileBtn, pathName, durationBox, addBtn, cancelBtn);
 
@@ -178,16 +184,15 @@ public class AddSong {
             }
         });
 
-
     }
 
     public static int checkFormat(String fileName) {
 
-        int lastIndexDot = fileName.lastIndexOf('.');
+        String[] fileNameBits = fileName.split("\\.");
 
-        String format = fileName.substring(lastIndexDot);
+        int amountBits = fileNameBits.length;
 
-        if (!format.equalsIgnoreCase(".mp4")) {
+        if (!fileNameBits[amountBits - 1].equalsIgnoreCase("mp4")) {
             return 2;
         }
 
@@ -209,7 +214,9 @@ public class AddSong {
             e.printStackTrace();
         }
 
+
     }
+
 
     public static boolean fileExists(String fileName) {
         File tempFile = new File("/home/cst2550/IdeaProjects/KaraokeApplication/src/videos/" + fileName);

@@ -40,12 +40,13 @@ public class Player {
     static Slider timeSlider, volumeSlider;
     static boolean muteState = false;
     static double volume = 100;
+    static LinkedList<String> playlist = importData.getPlaylist();
 
     public static void playPlaylist(HashST<String, Song> songs) {
 
         mediaPlayerStage = new Stage();
 
-        LinkedList<String> playlist = importData.getPlaylist();
+        playlist = importData.getPlaylist();
 
         double screenWidth = Screen.getPrimary().getBounds().getWidth();
         double columnWidth = screenWidth / 4;
@@ -169,6 +170,7 @@ public class Player {
                 if (checkExistInPlaylist(selectedSongName) == 0) {
                     exportData.addToPlaylist(selectedSongName);
                     refreshPlaylist();
+                    playlistTable.getSelectionModel().selectFirst();
                 } else {
                     DialogBox.box("Song is already in playlist!\nSelect another song to add to the playlist!!");
                 }
@@ -514,17 +516,15 @@ public class Player {
         if (importData.getPlaylistCount() > 1) {
             mediaPlayer.stop();
             mediaPlayer.dispose();
-            playlistTable.getSelectionModel().select(1);
-            int getSelectionPlaylist = playlistTable.getSelectionModel().getSelectedIndex();
+            playlistTable.getSelectionModel().selectFirst();
+            int selectedUpdateIndex = playlistTable.getSelectionModel().getSelectedIndex();
+            deleteFromPlaylist(selectedUpdateIndex);
+            refreshPlaylist();
+            playlistTable.getSelectionModel().selectFirst();
             Song newSelectedSong = (Song) playlistTable.getSelectionModel().getSelectedItem();
             String newFileName = songs.get(newSelectedSong.getSongName()).getFileName();
-            playlist.removeFirst();
-            exportData.updateFile("playlist.txt", playlist);
-            refreshPlaylist();
-            playlistTable.getSelectionModel().select(0);
             file = new File("videos/" + newFileName);
             media = new Media(file.toURI().toString());
-            mediaPlayer.dispose();
             mediaPlayer = new MediaPlayer(media);
             mediaView.setMediaPlayer(mediaPlayer);
             mediaPlayer.play();
@@ -546,13 +546,14 @@ public class Player {
 
     public static void refreshPlaylist() {
 
-        LinkedList<String> playlist = importData.getPlaylist();
+        playlist = importData.getPlaylist();
 
         playlistTable.getItems().clear();
 
         for (int i = 0; i < playlist.size(); i++) {
             playlistTable.getItems().add(new Song(playlist.get(i)));
         }
+
 
     }
 
