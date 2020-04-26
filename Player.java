@@ -90,6 +90,7 @@ public class Player {
         mediaView = new MediaView(mediaPlayer);
         mediaView.setFitWidth(screenWidth - columnWidth);
 
+
         try {
             TableColumn<Song, String> songNameColumn = new TableColumn<>("Songs");
             songNameColumn.setCellValueFactory(new PropertyValueFactory<>("songName"));
@@ -285,6 +286,12 @@ public class Player {
             }
         });
 
+        Button fullScreenBtn = new Button("Fullscreen (Esc to switch back)");
+        fullScreenBtn.setFocusTraversable(false);
+        fullScreenBtn.setMinHeight(40);
+        fullScreenBtn.setMinWidth(150);
+        fullScreenBtn.setAlignment(Pos.CENTER);
+
         timeSlider = new Slider();
         timeSlider.setFocusTraversable(false);
         timeSlider.setShowTickLabels(true);
@@ -318,13 +325,13 @@ public class Player {
 
         HBox volumeBox = new HBox(20);
         volumeBox.setAlignment(Pos.CENTER);
-        volumeBox.setPadding(new Insets(0, 0, 0, 50));
+        volumeBox.setPadding(new Insets(0, 50, 0, 50));
         volumeBox.getChildren().addAll(volumeText, volumeSlider);
 
         HBox mediaBtnBox = new HBox(20);
         mediaBtnBox.setAlignment(Pos.CENTER);
         mediaBtnBox.setPadding(new Insets(0, 0, 0, 0));
-        mediaBtnBox.getChildren().addAll(pauseBtn, stopBtn, nextBtn, muteBtn, volumeBox);
+        mediaBtnBox.getChildren().addAll(pauseBtn, stopBtn, nextBtn, muteBtn, volumeBox, fullScreenBtn);
 
         HBox sliderBox = new HBox();
         sliderBox.setAlignment(Pos.CENTER);
@@ -372,6 +379,22 @@ public class Player {
         gridPane.requestFocus();
 
         Scene scene = new Scene(gridPane);
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (keyEvent.getCode().equals(KeyCode.SPACE)) {
+                    MediaPlayer.Status status = mediaPlayer.getStatus();
+
+                    if (status == MediaPlayer.Status.PLAYING) {
+                        mediaPlayer.pause();
+                        pauseBtn.setText("Play");
+                    } else {
+                        mediaPlayer.play();
+                        pauseBtn.setText("Pause");
+                    }
+                }
+            }
+        });
 
         mediaPlayerStage.setScene(scene);
         mediaPlayerStage.setMaximized(true);
@@ -382,6 +405,57 @@ public class Player {
             mediaPlayer.stop();
             e.consume();
             mediaPlayerStage.close();
+        });
+
+        fullScreenBtn.setOnAction(e -> {
+            GridPane fullPane = new GridPane();
+            fullPane.setAlignment(Pos.CENTER);
+            fullPane.add(mediaView, 0, 0);
+            mediaPlayerStage.getScene().setRoot(fullPane);
+            mediaView.setFitWidth(screenWidth);
+            mediaPlayerStage.getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent keyEvent) {
+                    if (keyEvent.getCode().equals(KeyCode.ESCAPE)) {
+                        scene.setRoot(gridPane);
+                        mediaView.setFitWidth(screenWidth - columnWidth);
+                        playerBox.getChildren().add(mediaView);
+                        if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+                            pauseBtn.setText("Pause");
+                        } else {
+                            pauseBtn.setText("Play");
+                        }
+                        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+                            @Override
+                            public void handle(KeyEvent keyEvent) {
+                                if (keyEvent.getCode().equals(KeyCode.SPACE)) {
+                                    MediaPlayer.Status status = mediaPlayer.getStatus();
+
+                                    if (status == MediaPlayer.Status.PLAYING) {
+                                        mediaPlayer.pause();
+                                        pauseBtn.setText("Play");
+                                    } else {
+                                        mediaPlayer.play();
+                                        pauseBtn.setText("Pause");
+                                    }
+                                }
+                            }
+                        });
+                    } else if (keyEvent.getCode().equals(KeyCode.SPACE)) {
+                        MediaPlayer.Status status = mediaPlayer.getStatus();
+
+                        if (status == MediaPlayer.Status.PLAYING) {
+                            mediaPlayer.pause();
+                            pauseBtn.setText("Play");
+                        } else {
+                            mediaPlayer.play();
+                            pauseBtn.setText("Pause");
+                        }
+                    }
+
+                }
+            });
+
         });
 
         mediaPlayer.play();
@@ -448,7 +522,9 @@ public class Player {
             exportData.updateFile("playlist.txt", playlist);
             refreshPlaylist();
             playlistTable.getSelectionModel().select(0);
-            media = new Media("file:///home/cst2550/IdeaProjects/KaraokeApplication/src/videos/" + newFileName);
+            file = new File("videos/" + newFileName);
+            media = new Media(file.toURI().toString());
+            mediaPlayer.dispose();
             mediaPlayer = new MediaPlayer(media);
             mediaView.setMediaPlayer(mediaPlayer);
             mediaPlayer.play();
