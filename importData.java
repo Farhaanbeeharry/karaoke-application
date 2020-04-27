@@ -43,7 +43,7 @@ System.exit(0);
         LinkedList<String> playlist = new LinkedList<String>();
 
         try {
-            FileReader inputFile = new FileReader("/home/cst2550/IdeaProjects/KaraokeApplication/src/data/" + fileName);
+            FileReader inputFile = new FileReader("data/" + fileName);
 
             try (BufferedReader inputBuffer = new BufferedReader(inputFile)) {
                 String data;
@@ -75,7 +75,7 @@ System.exit(0);
         String data = "";
 
         try {
-            FileReader inputFile = new FileReader("/home/cst2550/IdeaProjects/KaraokeApplication/src/data/" + fileName);
+            FileReader inputFile = new FileReader("data/" + fileName);
 
             try (BufferedReader inputBuffer = new BufferedReader(inputFile)) {
 

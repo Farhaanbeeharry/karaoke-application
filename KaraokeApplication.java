@@ -15,7 +15,7 @@ public class KaraokeApplication extends Application {
     public static void main(String[] args) {
 
         if (args.length == 0) {
-            exportData.writeLocation("/home/cst2550/IdeaProjects/KaraokeApplication/src/data/songList.txt");
+            exportData.writeLocation("data/songList.txt");
         } else if (args.length > 1) {
             System.out.println("Too many arguments!");
             System.exit(0);
@@ -43,7 +43,7 @@ public class KaraokeApplication extends Application {
         title.setAlignment(Pos.CENTER);
 
         try {
-            Image image = new Image(new FileInputStream("/home/cst2550/IdeaProjects/KaraokeApplication/src/images/logo.png"));
+            Image image = new Image(new FileInputStream("images/logo.png"));
             ImageView imageView = new ImageView(image);
             imageView.setFitHeight(300);
             imageView.setPreserveRatio(true);

@@ -281,10 +281,12 @@ public class Player {
                 mediaPlayer.setMute(true);
                 muteBtn.setText("Unmute");
                 muteState = !muteState;
+		volumeSlider.setValue(0);
             } else {
                 mediaPlayer.setMute(false);
                 muteBtn.setText("Mute");
                 muteState = !muteState;
+		volumeSlider.setValue(volume);
             }
         });
 
@@ -528,6 +530,9 @@ public class Player {
             mediaPlayer = new MediaPlayer(media);
             mediaView.setMediaPlayer(mediaPlayer);
             mediaPlayer.play();
+		if (muteState) {
+			mediaPlayer.setMute(true);
+}
             refreshTimeSlider();
             refreshVolumeSlider();
             mediaPlayer.setOnEndOfMedia(() -> {

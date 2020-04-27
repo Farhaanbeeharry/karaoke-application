@@ -10,7 +10,7 @@ public class exportData {
 
         String fileName = "playlist.txt";
 
-        File inputFile = new File("/home/cst2550/IdeaProjects/KaraokeApplication/src/data/" + fileName);
+        File inputFile = new File("data/" + fileName);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(inputFile, true))) {
             if (checkEmptyFile(fileName) == false) {
@@ -25,7 +25,7 @@ public class exportData {
 
     public static boolean checkEmptyFile(String fileName) {
 
-        File inputFile = new File("/home/cst2550/IdeaProjects/KaraokeApplication/src/data/" + fileName);
+        File inputFile = new File("data/" + fileName);
 
         if (inputFile.length() == 0) {
             return true;
@@ -37,7 +37,7 @@ public class exportData {
 
     public static void updateFile(String fileName, LinkedList<String> playlist) {
         try {
-            File outputFile = new File("/home/cst2550/IdeaProjects/KaraokeApplication/src/data/" + fileName);
+            File outputFile = new File("data/" + fileName);
             try (PrintStream writer = new PrintStream(outputFile)) {
                 for (int i = 0; i < playlist.size(); i++) {
                     if (!(playlist.get(i) == null)) {
@@ -59,7 +59,7 @@ public class exportData {
 
 
         try {
-            File outputFile = new File("/home/cst2550/IdeaProjects/KaraokeApplication/src/data/fileLocation.txt");
+            File outputFile = new File("data/fileLocation.txt");
             try (PrintStream writer = new PrintStream(outputFile)) {
 
                 writer.print(fileLocation);

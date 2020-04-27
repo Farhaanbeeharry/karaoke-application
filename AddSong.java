@@ -206,7 +206,7 @@ public class AddSong {
     public static void copyFile(String sourcePath, String sourceName) {
 
         File originalFile = new File(sourcePath);
-        File newFile = new File("/home/cst2550/IdeaProjects/KaraokeApplication/src/videos/" + sourceName);
+        File newFile = new File("videos/" + sourceName);
 
         try {
             Files.copy(originalFile.toPath(), newFile.toPath());
@@ -219,7 +219,7 @@ public class AddSong {
 
 
     public static boolean fileExists(String fileName) {
-        File tempFile = new File("/home/cst2550/IdeaProjects/KaraokeApplication/src/videos/" + fileName);
+        File tempFile = new File("videos/" + fileName);
         boolean exists = tempFile.exists();
         return exists;
     }
