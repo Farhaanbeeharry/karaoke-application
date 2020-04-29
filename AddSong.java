@@ -122,7 +122,7 @@ public class AddSong {
                 fullBox.getChildren().remove(cancelBtn);
                 addBtn.setText("Please while ... video file uploading !");
                 copyFile(selectedFile.getPath(), selectedFile.getName());
-                exportData.writeSong(newSong);
+                exportData.writeSong(songs, newSong);
                 addStage.close();
                 DialogBox.box("Song successfully added to library !");
 

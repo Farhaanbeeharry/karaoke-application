@@ -72,18 +72,45 @@ public class exportData {
 
     }
 
-    public static void writeSong(Song newSong) {
-        try {
-            File inputFile = new File(importData.importFileLocation());
+  
+    public static void writeSong(HashST<String, Song> songs, Song newSong) {
 
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(inputFile, true))) {
-                writer.newLine();
-                writer.write(newSong.getSongName() + "\t" + newSong.getArtistName() + "\t" + newSong.getDuration() + "\t" + newSong.getFileName());
-            }
+        LinkedList<Song> songsArray = new LinkedList<Song>();
 
-        } catch (IOException e) {
-            DialogBox.box("File not found!");
+        for (String songName : songs.keys()) {
+
+            songsArray.add(songs.get(songName));
+
         }
+
+        songsArray.add(newSong);
+
+        try {
+            File outputFile = new File(importData.importFileLocation());
+            try (PrintStream writer = new PrintStream(outputFile)) {
+                for (int i = 0; i < songsArray.size(); i++) {
+                    if (!(songsArray.get(i).getSongName() == null)) {
+                        writer.print(songsArray.get(i).getSongName());
+                        writer.print("\t");
+                        writer.print(songsArray.get(i).getArtistName());
+                        writer.print("\t");
+                        writer.print(songsArray.get(i).getDuration());
+                        writer.print("\t");
+                        if (i == songsArray.size() - 1) {
+                            writer.print(songsArray.get(i).getFileName());
+                        } else {
+                            writer.println(songsArray.get(i).getFileName());
+                        }
+                    }
+
+                }
+            }
+        } catch (FileNotFoundException e) {
+            DialogBox.box("File not found!");
+
+        }
+
+
     }
 
 }
