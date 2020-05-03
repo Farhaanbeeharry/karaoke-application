@@ -42,8 +42,8 @@ public class tableView {
             TableColumn<Song, String> songNameColumn = new TableColumn<>("Song Name");
             songNameColumn.setCellValueFactory(new PropertyValueFactory<>("songName"));
             songNameColumn.setMinWidth(columnWidth - 10);
+	    songNameColumn.setSortable(true);
             songNameColumn.setResizable(false);
-            songNameColumn.setSortable(false);
 
             TableColumn<Song, String> artistNameColumn = new TableColumn<>("Artist Name");
             artistNameColumn.setCellValueFactory(new PropertyValueFactory<>("artistName"));
@@ -79,13 +79,15 @@ public class tableView {
         searchField.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyPressed) {
-                if (keyPressed.getCode().equals(KeyCode.ENTER)) {
-                    if (!searchField.getText().matches("")) {
-                        searchSongName(songs, searchField.getText());
-                    } else {
-                        getDefaultList(songs);
-                    }
-                }
+		if (!(searchField.getText() + keyPressed.getText()).matches("")) {
+if (keyPressed.getCode().equals(KeyCode.BACK_SPACE)) {
+		searchSongName(songs, searchField.getText());
+		} else {
+                        searchSongName(songs, searchField.getText() + keyPressed.getText());
+}
+		} else {
+		getDefaultList(songs);
+		}
             }
         });
 
