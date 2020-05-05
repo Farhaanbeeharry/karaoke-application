@@ -92,6 +92,20 @@ public class Settings {
             DialogBox.box("Settings saved !");
         });
 
+        Button restoreDefaultBtn = new Button("Restore default and save");
+        restoreDefaultBtn.setMinHeight(40);
+        restoreDefaultBtn.setMinWidth(300);
+        restoreDefaultBtn.setFocusTraversable(false);
+        restoreDefaultBtn.setOnAction(e -> {
+           String[] data = new String[2];
+           data[0] = "left";
+           data[1] = "light";
+           exportData.exportConfig(data);
+            KaraokeApplication.startApplication();
+            settingsStage.close();
+            DialogBox.box("Default settings restored !");
+        });
+
         Button cancelBtn = new Button("Cancel");
         cancelBtn.setMinHeight(40);
         cancelBtn.setMinWidth(300);
@@ -130,7 +144,7 @@ public class Settings {
 
         VBox settingsBox = new VBox(30);
         settingsBox.setAlignment(Pos.CENTER);
-        settingsBox.getChildren().addAll(layoutBox, uiModeBox, saveBtn, cancelBtn);
+        settingsBox.getChildren().addAll(layoutBox, uiModeBox, saveBtn, restoreDefaultBtn, cancelBtn);
 
         GridPane gridPane = new GridPane();
         gridPane.setAlignment(Pos.CENTER);
