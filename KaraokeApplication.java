@@ -82,6 +82,15 @@ public class KaraokeApplication extends Application {
                 tableView.tableView(songs);
             });
 
+            Button settingsBtn = new Button("Settings");
+            settingsBtn.setAlignment(Pos.CENTER);
+            settingsBtn.setMinWidth(300);
+            settingsBtn.setMinHeight(40);
+            settingsBtn.setFocusTraversable(false);
+            settingsBtn.setOnAction(e -> {
+                Settings.setting();
+            });
+
             Button exitBtn = new Button("Exit");
             exitBtn.setAlignment(Pos.CENTER);
             exitBtn.setMinHeight(40);
@@ -96,7 +105,8 @@ public class KaraokeApplication extends Application {
             mainGrid.add(playPlaylist, 0, 4);
             mainGrid.add(addSongBtn, 0, 5);
             mainGrid.add(listAllBtn, 0, 6);
-            mainGrid.add(exitBtn, 0, 8);
+            mainGrid.add(settingsBtn, 0, 7);
+            mainGrid.add(exitBtn, 0, 9);
             mainGrid.setAlignment(Pos.CENTER);
 
         } catch (IOException e) {

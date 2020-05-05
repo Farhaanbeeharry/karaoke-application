@@ -200,8 +200,7 @@ if (keyPressed.getCode().equals(KeyCode.BACK_SPACE)) {
             System.out.println(e);
         }
 
-
-        VBox playlistBox = new VBox();
+ VBox playlistBox = new VBox();
         playlistBox.setMinWidth(columnWidth);
         playlistBox.setAlignment(Pos.CENTER);
         playlistBox.getChildren().add(playlistTable);
@@ -219,7 +218,11 @@ if (keyPressed.getCode().equals(KeyCode.BACK_SPACE)) {
 
         HBox tableHBox = new HBox();
         tableHBox.setAlignment(Pos.CENTER_LEFT);
-        tableHBox.getChildren().addAll(leftPaneBox, tableVBox);
+        if (importData.importConfig().equalsIgnoreCase("left")) {
+            tableHBox.getChildren().addAll(leftPaneBox, tableVBox);
+        } else if (importData.importConfig().equalsIgnoreCase("right")) {
+            tableHBox.getChildren().addAll(tableVBox, leftPaneBox);
+        }
 
         tablePane.add(tableHBox, 0, 0);
 

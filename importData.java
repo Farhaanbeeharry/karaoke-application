@@ -91,4 +91,25 @@ System.exit(0);
 
     }
 
+   public static String importConfig() {
+
+        String fileName = "config.txt";
+        String data = "";
+
+        try {
+            FileReader inputFile = new FileReader("data/" + fileName);
+
+            try (BufferedReader inputBuffer = new BufferedReader(inputFile)) {
+
+                data = inputBuffer.readLine();
+
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+        return data;
+
+    }
+
 }

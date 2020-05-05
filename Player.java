@@ -324,7 +324,12 @@ public class Player {
 
         VBox playerBox = new VBox();
         playerBox.setAlignment(Pos.CENTER);
-        playerBox.setPadding(new Insets(0, 20, 0, 0));
+        if (importData.importConfig().equalsIgnoreCase("left")) {
+            playerBox.setPadding(new Insets(0, 20, 0, 0));
+        } else if (importData.importConfig().equalsIgnoreCase("right")) {
+            playerBox.setPadding(new Insets(0, 0, 0, 20));
+            songTitle.setPadding(new Insets(0, 0, 0, 20));
+        }
         playerBox.getChildren().add(mediaView);
 
         HBox volumeBox = new HBox(20);
@@ -372,13 +377,20 @@ public class Player {
 
         VBox leftPaneBox = new VBox(20);
         leftPaneBox.setAlignment(Pos.CENTER);
-        leftPaneBox.setPadding(new Insets(20, 0, 0, 20));
+        if (importData.importConfig().equalsIgnoreCase("left")) {
+            leftPaneBox.setPadding(new Insets(20, 0, 0, 20));
+        } else if (importData.importConfig().equalsIgnoreCase("right")) {
+            leftPaneBox.setPadding(new Insets(20, 20, 0, 0));
+        }
         leftPaneBox.getChildren().addAll(listBox, allSongsBox, playlistBtnBox);
 
         HBox windowBox = new HBox(20);
         windowBox.setAlignment(Pos.CENTER);
-        windowBox.getChildren().addAll(leftPaneBox, mediaVBox);
-
+        if (importData.importConfig().equalsIgnoreCase("left")) {
+            windowBox.getChildren().addAll(leftPaneBox, mediaVBox);
+        } else if (importData.importConfig().equalsIgnoreCase("right")) {
+            windowBox.getChildren().addAll(mediaVBox, leftPaneBox);
+        }
         gridPane.add(windowBox, 0, 0);
         gridPane.requestFocus();
 

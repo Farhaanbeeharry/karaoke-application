@@ -113,4 +113,21 @@ public class exportData {
 
     }
 
+public static void exportConfig(String config) {
+
+
+        try {
+            File outputFile = new File("data/config.txt");
+            try (PrintStream writer = new PrintStream(outputFile)) {
+
+                writer.print(config);
+
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found!");
+        }
+
+
+    }
+
 }
