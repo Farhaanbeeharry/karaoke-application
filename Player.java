@@ -324,9 +324,9 @@ public class Player {
 
         VBox playerBox = new VBox();
         playerBox.setAlignment(Pos.CENTER);
-        if (importData.importConfig().equalsIgnoreCase("left")) {
+        if (importData.importConfig()[0].equalsIgnoreCase("left")) {
             playerBox.setPadding(new Insets(0, 20, 0, 0));
-        } else if (importData.importConfig().equalsIgnoreCase("right")) {
+        } else if (importData.importConfig()[0].equalsIgnoreCase("right")) {
             playerBox.setPadding(new Insets(0, 0, 0, 20));
             songTitle.setPadding(new Insets(0, 0, 0, 20));
         }
@@ -377,24 +377,27 @@ public class Player {
 
         VBox leftPaneBox = new VBox(20);
         leftPaneBox.setAlignment(Pos.CENTER);
-        if (importData.importConfig().equalsIgnoreCase("left")) {
+        if (importData.importConfig()[0].equalsIgnoreCase("left")) {
             leftPaneBox.setPadding(new Insets(20, 0, 0, 20));
-        } else if (importData.importConfig().equalsIgnoreCase("right")) {
+        } else if (importData.importConfig()[0].equalsIgnoreCase("right")) {
             leftPaneBox.setPadding(new Insets(20, 20, 0, 0));
         }
         leftPaneBox.getChildren().addAll(listBox, allSongsBox, playlistBtnBox);
 
         HBox windowBox = new HBox(20);
         windowBox.setAlignment(Pos.CENTER);
-        if (importData.importConfig().equalsIgnoreCase("left")) {
+        if (importData.importConfig()[0].equalsIgnoreCase("left")) {
             windowBox.getChildren().addAll(leftPaneBox, mediaVBox);
-        } else if (importData.importConfig().equalsIgnoreCase("right")) {
+        } else if (importData.importConfig()[0].equalsIgnoreCase("right")) {
             windowBox.getChildren().addAll(mediaVBox, leftPaneBox);
         }
         gridPane.add(windowBox, 0, 0);
         gridPane.requestFocus();
 
         Scene scene = new Scene(gridPane);
+if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
+            scene.getStylesheets().add("file:stylesheet/style.css");
+        }
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {

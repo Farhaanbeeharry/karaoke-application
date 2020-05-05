@@ -218,15 +218,18 @@ if (keyPressed.getCode().equals(KeyCode.BACK_SPACE)) {
 
         HBox tableHBox = new HBox();
         tableHBox.setAlignment(Pos.CENTER_LEFT);
-        if (importData.importConfig().equalsIgnoreCase("left")) {
+        if (importData.importConfig()[0].equalsIgnoreCase("left")) {
             tableHBox.getChildren().addAll(leftPaneBox, tableVBox);
-        } else if (importData.importConfig().equalsIgnoreCase("right")) {
+        } else if (importData.importConfig()[0].equalsIgnoreCase("right")) {
             tableHBox.getChildren().addAll(tableVBox, leftPaneBox);
         }
 
         tablePane.add(tableHBox, 0, 0);
 
         Scene scene = new Scene(tablePane);
+if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
+            scene.getStylesheets().add("file:stylesheet/style.css");
+        }
 
         tableViewStage.setScene(scene);
         tableViewStage.show();

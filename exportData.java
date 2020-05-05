@@ -113,14 +113,16 @@ public class exportData {
 
     }
 
-public static void exportConfig(String config) {
+public static void exportConfig(String[] config) {
 
 
         try {
             File outputFile = new File("data/config.txt");
             try (PrintStream writer = new PrintStream(outputFile)) {
 
-                writer.print(config);
+                writer.print(config[0]);
+                writer.print("--");
+                writer.print(config[1]);
 
             }
         } catch (FileNotFoundException e) {

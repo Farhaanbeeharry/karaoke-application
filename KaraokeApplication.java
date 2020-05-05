@@ -6,7 +6,6 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -33,6 +32,14 @@ public class KaraokeApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+
+        startApplication();
+
+    }
+
+    public static void startApplication() {
+
+        Stage primaryStage = new Stage();
 
         GridPane mainGrid = new GridPane();
         mainGrid.setAlignment(Pos.CENTER);
@@ -89,6 +96,7 @@ public class KaraokeApplication extends Application {
             settingsBtn.setFocusTraversable(false);
             settingsBtn.setOnAction(e -> {
                 Settings.setting();
+                primaryStage.close();
             });
 
             Button exitBtn = new Button("Exit");
@@ -114,8 +122,11 @@ public class KaraokeApplication extends Application {
         }
 
         Scene scene = new Scene(mainGrid);
-
+        if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
+            scene.getStylesheets().add("file:stylesheet/style.css");
+        }
         primaryStage.setTitle("Karaoke Application");
+        primaryStage.setScene(scene);
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.setMaximized(true);
@@ -129,3 +140,4 @@ public class KaraokeApplication extends Application {
     }
 
 }
+

@@ -91,10 +91,11 @@ System.exit(0);
 
     }
 
-   public static String importConfig() {
+    public static String[] importConfig() {
 
         String fileName = "config.txt";
         String data = "";
+        String[] config = null;
 
         try {
             FileReader inputFile = new FileReader("data/" + fileName);
@@ -102,14 +103,16 @@ System.exit(0);
             try (BufferedReader inputBuffer = new BufferedReader(inputFile)) {
 
                 data = inputBuffer.readLine();
+                config = data.split("--");
 
             }
         } catch (IOException e) {
             System.out.println(e);
         }
 
-        return data;
+        return config;
 
     }
 
 }
+

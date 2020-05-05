@@ -153,6 +153,10 @@ public class AddSong {
 
 
         Scene scene = new Scene(mainGrid);
+if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
+            scene.getStylesheets().add("file:stylesheet/style.css");
+        }
+
 
         addStage = new Stage();
         addStage.setTitle("Add new song to library");
