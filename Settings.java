@@ -87,8 +87,8 @@ public class Settings {
                 data[1] = "dark";
             }
             exportData.exportConfig(data);
-            settingsStage.close();
             KaraokeApplication.startApplication();
+            settingsStage.close();
             DialogBox.box("Settings saved !");
         });
 
@@ -97,6 +97,7 @@ public class Settings {
         cancelBtn.setMinWidth(300);
         cancelBtn.setFocusTraversable(false);
         cancelBtn.setOnAction(e -> {
+            KaraokeApplication.startApplication();
             settingsStage.close();
         });
 
