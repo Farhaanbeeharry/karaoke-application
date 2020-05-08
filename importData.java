@@ -3,9 +3,9 @@ import java.util.LinkedList;
 
 public class importData {
 
-    public static HashST<String, Song> importSongList() {
+    public static HashFB<String, Song> importSongList() {
 
-        HashST<String, Song> songs = new HashST<String, Song>();
+        HashFB<String, Song> songs = new HashFB<String, Song>();
 
         try {
             FileReader inputFile = new FileReader(importFileLocation());
@@ -21,9 +21,9 @@ public class importData {
                     songs.put(songPerLine[0], readSong);
                     data = inputBuffer.readLine();
                 }
-            }catch (Exception e) {
+            } catch (Exception e) {
                 System.out.println("File is not compatible with this app!");
-System.exit(0);
+                System.exit(0);
             }
         } catch (IOException e) {
             System.out.println("Invalid Location");
@@ -33,8 +33,6 @@ System.exit(0);
         return songs;
 
     }
-
-   
 
     public static LinkedList<String> getPlaylist() {
 
@@ -115,4 +113,3 @@ System.exit(0);
     }
 
 }
-

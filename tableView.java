@@ -17,14 +17,13 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-
 public class tableView {
 
     static Stage tableViewStage;
     static TableView table, playlistTable;
     static TextField searchField;
 
-    public static void tableView(HashST<String, Song> songs) {
+    public static void tableView(HashFB<String, Song> songs) {
 
         tableViewStage = new Stage();
         tableViewStage.setTitle("All songs & My playlist");
@@ -42,7 +41,7 @@ public class tableView {
             TableColumn<Song, String> songNameColumn = new TableColumn<>("Song Name");
             songNameColumn.setCellValueFactory(new PropertyValueFactory<>("songName"));
             songNameColumn.setMinWidth(columnWidth - 10);
-	    songNameColumn.setSortable(true);
+            songNameColumn.setSortable(true);
             songNameColumn.setResizable(false);
 
             TableColumn<Song, String> artistNameColumn = new TableColumn<>("Artist Name");
@@ -79,15 +78,15 @@ public class tableView {
         searchField.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyPressed) {
-		if (!(searchField.getText() + keyPressed.getText()).matches("")) {
-if (keyPressed.getCode().equals(KeyCode.BACK_SPACE)) {
-		searchSongName(songs, searchField.getText());
-		} else {
+                if (!(searchField.getText() + keyPressed.getText()).matches("")) {
+                    if (keyPressed.getCode().equals(KeyCode.BACK_SPACE)) {
+                        searchSongName(songs, searchField.getText());
+                    } else {
                         searchSongName(songs, searchField.getText() + keyPressed.getText());
-}
-		} else {
-		getDefaultList(songs);
-		}
+                    }
+                } else {
+                    getDefaultList(songs);
+                }
             }
         });
 
@@ -200,7 +199,7 @@ if (keyPressed.getCode().equals(KeyCode.BACK_SPACE)) {
             System.out.println(e);
         }
 
- VBox playlistBox = new VBox();
+        VBox playlistBox = new VBox();
         playlistBox.setMinWidth(columnWidth);
         playlistBox.setAlignment(Pos.CENTER);
         playlistBox.getChildren().add(playlistTable);
@@ -227,7 +226,7 @@ if (keyPressed.getCode().equals(KeyCode.BACK_SPACE)) {
         tablePane.add(tableHBox, 0, 0);
 
         Scene scene = new Scene(tablePane);
-if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
+        if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
             scene.getStylesheets().add("file:stylesheet/style.css");
         }
 
@@ -236,7 +235,7 @@ if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
 
     }
 
-    public static void searchSongName(HashST<String, Song> songs, String criteria) {
+    public static void searchSongName(HashFB<String, Song> songs, String criteria) {
 
         table.getItems().clear();
 
@@ -254,8 +253,7 @@ if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
 
     }
 
-
-    public static void getDefaultList(HashST<String, Song> songs) {
+    public static void getDefaultList(HashFB<String, Song> songs) {
 
         table.getItems().clear();
 
@@ -267,7 +265,6 @@ if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
         }
 
         table.setItems(song);
-
 
     }
 
@@ -301,6 +298,5 @@ if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
 
         return 0;
     }
-
 
 }

@@ -1,4 +1,5 @@
 import java.io.FileInputStream;
+
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -32,10 +33,9 @@ public class DialogBox {
         messagePane.add(btnOK, 0, 1);
 
         Scene scene = new Scene(messagePane, 600, 150);
-if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
+        if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
             scene.getStylesheets().add("file:stylesheet/style.css");
         }
-
 
         messageWindow.setScene(scene);
         messageWindow.showAndWait();

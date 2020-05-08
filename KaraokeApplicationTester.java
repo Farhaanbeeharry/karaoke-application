@@ -1,20 +1,18 @@
 import org.junit.Test;
-
 import java.util.LinkedList;
-
 import static org.junit.Assert.*;
 
 public class KaraokeApplicationTester {
 
     @Test
     public void addSongToLibrary() {
-        HashST<String, Song> songs = importData.importSongList();
+        HashFB<String, Song> songs = importData.importSongList();
         assertNotNull("Songs should not be null", songs);
     }
 
     @Test
     public void searchSongInSongLibrary() {
-        HashST<String, Song> songs = importData.importSongList();
+        HashFB<String, Song> songs = importData.importSongList();
         String searchKey = "Angel";
         Song shouldMatchSong = songs.get("Angel");
         Song matchedSong = null;
@@ -28,9 +26,9 @@ public class KaraokeApplicationTester {
 
     @Test
     public void addSongToPlaylistTester() {
-        exportData.addToPlaylist("Song Test");
+        exportData.addToPlaylist("Angel");
         LinkedList<String> playlist = importData.getPlaylist();
-        assertTrue(playlist.get(playlist.size()-1).equals("Song Test"));
+        assertTrue(playlist.get(playlist.size()-1).equals("Angel"));
     }
 
     @Test
@@ -38,8 +36,8 @@ public class KaraokeApplicationTester {
         LinkedList<String> playlist = importData.getPlaylist();
         playlist.clear();
         exportData.updateFile("playlist.txt", playlist);
-        exportData.addToPlaylist("Song Test");
-        exportData.addToPlaylist("Next Song");
+        exportData.addToPlaylist("Angel");
+        exportData.addToPlaylist("Slow");
         playlist = importData.getPlaylist();
         String firstSong = playlist.get(0);
         String secondSong = playlist.get(1);
@@ -59,7 +57,7 @@ public class KaraokeApplicationTester {
         playlist.clear();
         exportData.updateFile("playlist.txt", playlist);
         exportData.addToPlaylist("Song to delete");
-        exportData.addToPlaylist("A Song");
+        exportData.addToPlaylist("Slow");
         playlist = importData.getPlaylist();
         int index = -1;
         for (int i = 0; i < playlist.size(); i++) {

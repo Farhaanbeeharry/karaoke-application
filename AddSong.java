@@ -1,22 +1,12 @@
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.beans.value.*;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.media.*;
 import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
+import javafx.stage.*;
 import javafx.util.Duration;
-
 import java.io.*;
 import java.nio.file.Files;
 
@@ -34,7 +24,7 @@ public class AddSong {
     static MediaPlayer mediaPlayer;
     static VBox fullBox;
 
-    public static void addToLibrary(HashST<String, Song> songs) {
+    public static void addToLibrary(HashFB<String, Song> songs) {
 
         GridPane mainGrid = new GridPane();
         mainGrid.setAlignment(Pos.CENTER);
@@ -76,7 +66,6 @@ public class AddSong {
         duration = new Text();
         duration.setText("No file chosen yet!");
 
-
         Button chooseFileBtn = new Button("Select video file ...");
         chooseFileBtn.setMinHeight(40);
         chooseFileBtn.setMinWidth(400);
@@ -99,7 +88,6 @@ public class AddSong {
             }
         });
 
-
         Button cancelBtn = new Button("Cancel");
         cancelBtn.setAlignment(Pos.CENTER);
         cancelBtn.setMinHeight(40);
@@ -108,7 +96,6 @@ public class AddSong {
         cancelBtn.setOnAction(e -> {
             addStage.close();
         });
-
 
         addBtn = new Button("Add");
         addBtn.setAlignment(Pos.CENTER);
@@ -151,12 +138,10 @@ public class AddSong {
 
         mainGrid.add(fullBox, 0, 0);
 
-
         Scene scene = new Scene(mainGrid);
-if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
+        if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
             scene.getStylesheets().add("file:stylesheet/style.css");
         }
-
 
         addStage = new Stage();
         addStage.setTitle("Add new song to library");
@@ -218,9 +203,7 @@ if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
             e.printStackTrace();
         }
 
-
     }
-
 
     public static boolean fileExists(String fileName) {
         File tempFile = new File("videos/" + fileName);

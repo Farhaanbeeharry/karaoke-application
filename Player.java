@@ -1,26 +1,16 @@
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.beans.*;
+import javafx.beans.value.*;
+import javafx.collections.*;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.scene.media.*;
 import javafx.scene.text.Text;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
+import javafx.stage.*;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -42,7 +32,7 @@ public class Player {
     static double volume = 100;
     static LinkedList<String> playlist = importData.getPlaylist();
 
-    public static void playPlaylist(HashST<String, Song> songs) {
+    public static void playPlaylist(HashFB<String, Song> songs) {
 
         mediaPlayerStage = new Stage();
 
@@ -90,7 +80,6 @@ public class Player {
         mediaPlayer = new MediaPlayer(media);
         mediaView = new MediaView(mediaPlayer);
         mediaView.setFitWidth(screenWidth - columnWidth);
-
 
         try {
             TableColumn<Song, String> songNameColumn = new TableColumn<>("Songs");
@@ -144,7 +133,6 @@ public class Player {
                 searchSongName(songs, searchField.getText());
             }
         });
-
 
         Button defaultBtn = new Button("Show all songs");
         defaultBtn.setFocusTraversable(false);
@@ -281,12 +269,12 @@ public class Player {
                 mediaPlayer.setMute(true);
                 muteBtn.setText("Unmute");
                 muteState = !muteState;
-		volumeSlider.setValue(0);
+                volumeSlider.setValue(0);
             } else {
                 mediaPlayer.setMute(false);
                 muteBtn.setText("Mute");
                 muteState = !muteState;
-		volumeSlider.setValue(volume);
+                volumeSlider.setValue(volume);
             }
         });
 
@@ -395,7 +383,7 @@ public class Player {
         gridPane.requestFocus();
 
         Scene scene = new Scene(gridPane);
-if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
+        if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
             scene.getStylesheets().add("file:stylesheet/style.css");
         }
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -529,7 +517,7 @@ if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
         });
     }
 
-    private static void nextButtonAction(HashST<String, Song> songs, LinkedList<String> playlist) {
+    private static void nextButtonAction(HashFB<String, Song> songs, LinkedList<String> playlist) {
         if (importData.getPlaylistCount() > 1) {
             mediaPlayer.stop();
             mediaPlayer.dispose();
@@ -545,9 +533,9 @@ if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
             mediaPlayer = new MediaPlayer(media);
             mediaView.setMediaPlayer(mediaPlayer);
             mediaPlayer.play();
-		if (muteState) {
-			mediaPlayer.setMute(true);
-}
+            if (muteState) {
+                mediaPlayer.setMute(true);
+            }
             refreshTimeSlider();
             refreshVolumeSlider();
             mediaPlayer.setOnEndOfMedia(() -> {
@@ -574,7 +562,6 @@ if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
             playlistTable.getItems().add(new Song(playlist.get(i)));
         }
 
-
     }
 
     public static void deleteFromPlaylist(int indexToDelete) {
@@ -583,7 +570,7 @@ if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
         exportData.updateFile("playlist.txt", playlist);
     }
 
-    public static void searchSongName(HashST<String, Song> songs, String criteria) {
+    public static void searchSongName(HashFB<String, Song> songs, String criteria) {
 
         allSongTable.getItems().clear();
 
@@ -601,8 +588,7 @@ if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
 
     }
 
-
-    public static void getDefaultList(HashST<String, Song> songs) {
+    public static void getDefaultList(HashFB<String, Song> songs) {
 
         allSongTable.getItems().clear();
 
@@ -614,7 +600,6 @@ if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
         }
 
         allSongTable.setItems(song);
-
 
     }
 
@@ -630,6 +615,5 @@ if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
 
         return 0;
     }
-
 
 }

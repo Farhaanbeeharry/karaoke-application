@@ -97,10 +97,10 @@ public class Settings {
         restoreDefaultBtn.setMinWidth(300);
         restoreDefaultBtn.setFocusTraversable(false);
         restoreDefaultBtn.setOnAction(e -> {
-           String[] data = new String[2];
-           data[0] = "left";
-           data[1] = "light";
-           exportData.exportConfig(data);
+            String[] data = new String[2];
+            data[0] = "left";
+            data[1] = "light";
+            exportData.exportConfig(data);
             KaraokeApplication.startApplication();
             settingsStage.close();
             DialogBox.box("Default settings restored !");

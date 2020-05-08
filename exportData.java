@@ -64,16 +64,14 @@ public class exportData {
 
                 writer.print(fileLocation);
 
-                }
+            }
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
         }
 
-
     }
 
-  
-    public static void writeSong(HashST<String, Song> songs, Song newSong) {
+    public static void writeSong(HashFB<String, Song> songs, Song newSong) {
 
         LinkedList<Song> songsArray = new LinkedList<Song>();
 
@@ -110,11 +108,9 @@ public class exportData {
 
         }
 
-
     }
 
-public static void exportConfig(String[] config) {
-
+    public static void exportConfig(String[] config) {
 
         try {
             File outputFile = new File("data/config.txt");
@@ -128,7 +124,6 @@ public static void exportConfig(String[] config) {
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
         }
-
 
     }
 
