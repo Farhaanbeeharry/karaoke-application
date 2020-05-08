@@ -13,7 +13,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -23,6 +22,7 @@ public class tableView {
     static TableView table, playlistTable;
     static TextField searchField;
 
+    //method for all songs and the playlist
     public static void tableView(HashFB<String, Song> songs) {
 
         tableViewStage = new Stage();
@@ -235,6 +235,7 @@ public class tableView {
 
     }
 
+    //search for the user input from the song library
     public static void searchSongName(HashFB<String, Song> songs, String criteria) {
 
         table.getItems().clear();
@@ -253,6 +254,7 @@ public class tableView {
 
     }
 
+    //list all the songs in the library
     public static void getDefaultList(HashFB<String, Song> songs) {
 
         table.getItems().clear();
@@ -268,6 +270,7 @@ public class tableView {
 
     }
 
+    //refresh the playlist table
     public static void refreshPlaylist() {
 
         LinkedList<String> playlist = importData.getPlaylist();
@@ -280,12 +283,14 @@ public class tableView {
 
     }
 
+    //delete from the playlist
     public static void deleteFromPlaylist(int indexToDelete) {
         LinkedList<String> playlist = importData.getPlaylist();
         playlist.remove(indexToDelete);
         exportData.updateFile("playlist.txt", playlist);
     }
 
+    //check if song is already in the playlist
     public static int checkExistInPlaylist(String songName) {
 
         LinkedList<String> playlist = importData.getPlaylist();

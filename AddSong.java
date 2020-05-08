@@ -12,6 +12,7 @@ import java.nio.file.Files;
 
 public class AddSong {
 
+    //creating static variables to be able to use them anywhere in the class
     static boolean proceed = false;
     static Text duration;
     static Stage addStage;
@@ -24,6 +25,7 @@ public class AddSong {
     static MediaPlayer mediaPlayer;
     static VBox fullBox;
 
+    //add a new song to the song file (song library)
     public static void addToLibrary(HashFB<String, Song> songs) {
 
         GridPane mainGrid = new GridPane();
@@ -38,6 +40,7 @@ public class AddSong {
         songNameText.minWidth(300);
         songNameText.setText("Song name :");
 
+        //input song name
         songNameField = new TextField();
         songNameField.setPromptText("Song name here ...");
         songNameField.setFocusTraversable(false);
@@ -48,6 +51,7 @@ public class AddSong {
         artistNameText.minWidth(300);
         artistNameText.setText("Artist name :");
 
+        //input artist name
         artistNameField = new TextField();
         artistNameField.setPromptText("Artist name here ...");
         artistNameField.setFocusTraversable(false);
@@ -66,6 +70,7 @@ public class AddSong {
         duration = new Text();
         duration.setText("No file chosen yet!");
 
+        //button for the user to choose his own video file
         Button chooseFileBtn = new Button("Select video file ...");
         chooseFileBtn.setMinHeight(40);
         chooseFileBtn.setMinWidth(400);
@@ -76,10 +81,10 @@ public class AddSong {
             if (selectedFile != null) {
                 pathName.setText(selectedFile.getPath());
                 chooseFileBtn.setText(selectedFile.getName());
-                int valid = checkFormat(selectedFile.getName());
+                int valid = checkFormat(selectedFile.getName()); //check if the string after the . is mp4
                 if (valid == 1) {
                     proceed = true;
-                    getDuration(selectedFile.getPath());
+                    getDuration(selectedFile.getPath()); //get the duration of the media file and displays it
                 } else if (valid == 2) {
                     duration.setText("Invalid format! Choose another file!");
                 } else if (valid == 3) {
@@ -103,13 +108,14 @@ public class AddSong {
         addBtn.setMinWidth(400);
         addBtn.setFocusTraversable(false);
         addBtn.setOnAction(e -> {
+            //if the song and artist field are not empty    
             if (!songNameField.getText().matches("") && !artistNameField.getText().matches("") && proceed) {
                 double videoDuration = Double.parseDouble(duration.getText());
                 Song newSong = new Song(songNameField.getText(), artistNameField.getText(), videoDuration, selectedFile.getName());
                 fullBox.getChildren().remove(cancelBtn);
                 addBtn.setText("Please while ... video file uploading !");
-                copyFile(selectedFile.getPath(), selectedFile.getName());
-                exportData.writeSong(songs, newSong);
+                copyFile(selectedFile.getPath(), selectedFile.getName()); //copy the chosen file by the user to the app's/videos directory
+                exportData.writeSong(songs, newSong); //write the song data to the file
                 addStage.close();
                 DialogBox.box("Song successfully added to library !");
 
@@ -139,6 +145,7 @@ public class AddSong {
         mainGrid.add(fullBox, 0, 0);
 
         Scene scene = new Scene(mainGrid);
+        //if the settings is in dark mode, the scene uses the dark mode css
         if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
             scene.getStylesheets().add("file:stylesheet/style.css");
         }
@@ -156,6 +163,7 @@ public class AddSong {
 
     }
 
+    //get the duration of the video file
     public static void getDuration(String filePath) {
 
         selectedFile = new File(filePath);
@@ -168,19 +176,21 @@ public class AddSong {
         mediaPlayer.currentTimeProperty().addListener(new ChangeListener<Duration>() {
             @Override
             public void changed(ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue) {
-                duration.setText(Double.toString(mediaPlayer.getMedia().getDuration().toSeconds()));
+                duration.setText(Double.toString(mediaPlayer.getMedia().getDuration().toSeconds())); //get the duration of the media file
                 mediaPlayer.stop();
             }
         });
 
     }
 
+    //check the selected file format
     public static int checkFormat(String fileName) {
 
         String[] fileNameBits = fileName.split("\\.");
 
         int amountBits = fileNameBits.length;
 
+        //check if the format matches mp4
         if (!fileNameBits[amountBits - 1].equalsIgnoreCase("mp4")) {
             return 2;
         }
@@ -192,19 +202,21 @@ public class AddSong {
         return 1;
     }
 
+    //copy the file to the app's directory
     public static void copyFile(String sourcePath, String sourceName) {
 
         File originalFile = new File(sourcePath);
         File newFile = new File("videos/" + sourceName);
 
         try {
-            Files.copy(originalFile.toPath(), newFile.toPath());
+            Files.copy(originalFile.toPath(), newFile.toPath()); //copy the video file to the app's directory
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
+    //check if the file already exists
     public static boolean fileExists(String fileName) {
         File tempFile = new File("videos/" + fileName);
         boolean exists = tempFile.exists();

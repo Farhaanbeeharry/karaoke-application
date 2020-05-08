@@ -5,6 +5,7 @@ public class Song {
     private double duration;
     private String fileName;
 
+    //default constructor
     public Song() {
         this.songName = "";
         this.artistName = "";
@@ -12,16 +13,19 @@ public class Song {
         this.fileName = "";
     }
 
+    //user-defined constructor
     public Song(String songName) {
         this.songName = songName;
     }
 
+    //user-defined constructor
     public Song(String songName, String artistName, double duration) {
         this.songName = songName;
         this.artistName = artistName;
         this.duration = duration;
     }
 
+    //user-defined constructor
     public Song(String songName, String artistName, double duration, String fileName) {
         this.songName = songName;
         this.artistName = artistName;
