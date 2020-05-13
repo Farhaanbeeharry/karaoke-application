@@ -2,17 +2,14 @@ import org.junit.Test;
 import java.util.LinkedList;
 import static org.junit.Assert.*;
 
-//contain a test of each of the required functionalities
 public class KaraokeApplicationTester {
 
-    //test read file into a hash table
     @Test
     public void addSongToLibrary() {
         HashFB<String, Song> songs = importData.importSongList();
         assertNotNull("Songs should not be null", songs);
     }
 
-    //search for a song in the song library
     @Test
     public void searchSongInSongLibrary() {
         HashFB<String, Song> songs = importData.importSongList();
@@ -27,7 +24,6 @@ public class KaraokeApplicationTester {
         assertTrue(shouldMatchSong.equals(matchedSong));
     }
 
-    //add a song to the playlist
     @Test
     public void addSongToPlaylistTester() {
         exportData.addToPlaylist("Angel");
@@ -35,7 +31,6 @@ public class KaraokeApplicationTester {
         assertTrue(playlist.get(playlist.size()-1).equals("Angel"));
     }
 
-    //test the next song function
     @Test
     public void testNextSong() {
         LinkedList<String> playlist = importData.getPlaylist();
@@ -50,14 +45,12 @@ public class KaraokeApplicationTester {
         assertTrue(playlist.get(0).equalsIgnoreCase(secondSong));
     }
 
-    //read the playlist file and insert the data into a table
     @Test
     public void retrieveSongFromPlaylist() {
         LinkedList<String> playlist = importData.getPlaylist();
         assertNotNull("Playlist should not be null", playlist);
     }
 
-    //delete a song from the playlist
     @Test
     public void deleteSongFromPlaylist() {
         LinkedList<String> playlist = importData.getPlaylist();

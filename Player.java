@@ -12,6 +12,7 @@ import javafx.scene.media.*;
 import javafx.scene.text.Text;
 import javafx.stage.*;
 import javafx.util.Duration;
+
 import java.util.ArrayList;
 import java.io.File;
 import java.util.LinkedList;
@@ -31,14 +32,12 @@ public class Player {
     static double volume = 100;
     static LinkedList<String> playlist = importData.getPlaylist();
 
-    //play the songs in the playlist LinkedList
     public static void playPlaylist(HashFB<String, Song> songs) {
 
         mediaPlayerStage = new Stage();
 
         playlist = importData.getPlaylist();
 
-        //get the screensize
         double screenWidth = Screen.getPrimary().getBounds().getWidth();
         double columnWidth = screenWidth / 4;
 
@@ -56,7 +55,7 @@ public class Player {
             playlistTable.prefHeightProperty().bind(mediaPlayerStage.heightProperty());
             playlistTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-            refreshPlaylist(); //add the linked list data into the playlist table
+            refreshPlaylist();
 
             playlistTable.getColumns().addAll(playlistColumn);
         } catch (Exception e) {
@@ -77,7 +76,6 @@ public class Player {
 
         file = new File("videos/" + fileName);
 
-        //creating a new media/media player
         media = new Media(file.toURI().toString());
         mediaPlayer = new MediaPlayer(media);
         mediaView = new MediaView(mediaPlayer);
@@ -97,21 +95,19 @@ public class Player {
             allSongTable.prefHeightProperty().bind(mediaPlayerStage.heightProperty());
             allSongTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-            getDefaultList(songs); //add the song library to the song table
+            getDefaultList(songs);
 
             allSongTable.getColumns().addAll(songNameColumn);
         } catch (Exception e) {
             System.out.println(e);
         }
 
-        //search for a song field
         searchField = new TextField();
         searchField.setPromptText("Search for a song ...");
         searchField.setMinHeight(40);
         searchField.setMinWidth((columnWidth - 95) / 3 * 2);
         searchField.setMaxWidth((columnWidth - 95) / 3 * 2);
         searchField.setFocusTraversable(false);
-        //if the user press on enter
         searchField.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyPressed) {
@@ -159,13 +155,12 @@ public class Player {
             gridPane.requestFocus();
             int getSelectionTable = allSongTable.getSelectionModel().getSelectedIndex();
             if (getSelectionTable != -1) {
-                //get the selected row's object from the table
                 Song selectedAddSong = (Song) allSongTable.getSelectionModel().getSelectedItem();
                 String selectedSongName = selectedAddSong.getSongName();
                 if (checkExistInPlaylist(selectedSongName) == 0) {
                     exportData.addToPlaylist(selectedSongName);
                     refreshPlaylist();
-                    playlistTable.getSelectionModel().selectFirst(); //select the first line in the table
+                    playlistTable.getSelectionModel().selectFirst();
                 } else {
                     DialogBox.box("Song is already in playlist!\nSelect another song to add to the playlist!!");
                 }
@@ -183,7 +178,7 @@ public class Player {
             gridPane.requestFocus();
             int getSelectionPlaylist = playlistTable.getSelectionModel().getSelectedIndex();
             if (getSelectionPlaylist == 0) {
-                deleteFromPlaylist(getSelectionPlaylist); //delete an index from the linked list
+                deleteFromPlaylist(getSelectionPlaylist);
                 refreshPlaylist();
                 mediaPlayer.stop();
                 playlistTable.getSelectionModel().selectFirst();
@@ -231,7 +226,6 @@ public class Player {
 
             MediaPlayer.Status status = mediaPlayer.getStatus();
 
-            //if media is playing, button becomes pause... else button becomes play
             if (status == MediaPlayer.Status.PLAYING) {
                 mediaPlayer.pause();
                 pauseBtn.setText("Play");
@@ -422,7 +416,6 @@ public class Player {
             mediaPlayerStage.close();
         });
 
-        //switch the media view to the largest possible b changing the scene
         fullScreenBtn.setOnAction(e -> {
             GridPane fullPane = new GridPane();
             fullPane.setAlignment(Pos.CENTER);
@@ -482,7 +475,6 @@ public class Player {
 
     }
 
-    //add listener to the volume slider. change the volume is the user changes the slider value
     private static void refreshVolumeSlider() {
 
         mediaPlayer.setVolume(volume / 100);
@@ -499,16 +491,14 @@ public class Player {
 
     }
 
-    //add a listener to the time slider
     private static void refreshTimeSlider() {
 
         mediaPlayer.setOnReady(() -> {
             timeSlider.setMin(0);
-            timeSlider.setMax(mediaPlayer.getMedia().getDuration().toSeconds()); //set the max value of the slider to the duration of the media file
+            timeSlider.setMax(mediaPlayer.getMedia().getDuration().toSeconds());
             timeSlider.setValue(0);
         });
 
-        //move the slider with the duration of the media 
         mediaPlayer.currentTimeProperty().addListener(new ChangeListener<Duration>() {
             @Override
             public void changed(ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue) {
@@ -518,7 +508,6 @@ public class Player {
             }
         });
 
-        //if the user changes the slider value, seek the media to the changed value
         timeSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -530,7 +519,6 @@ public class Player {
         });
     }
 
-    //next button action or on end of a media
     private static void nextButtonAction(HashFB<String, Song> songs, LinkedList<String> playlist) {
         if (importData.getPlaylistCount() > 1) {
             mediaPlayer.stop();
@@ -565,28 +553,25 @@ public class Player {
         }
     }
 
-    //refresh the playlist table
+
     public static void refreshPlaylist() {
 
         playlist = importData.getPlaylist();
 
         playlistTable.getItems().clear();
 
-        //for each item in the linked list, add the item to the playlist table
         for (int i = 0; i < playlist.size(); i++) {
             playlistTable.getItems().add(new Song(playlist.get(i)));
         }
 
     }
 
-    //delete a song from the playlist
     public static void deleteFromPlaylist(int indexToDelete) {
         LinkedList<String> playlist = importData.getPlaylist();
         playlist.remove(indexToDelete);
         exportData.updateFile("playlist.txt", playlist);
     }
 
-    //search for a song in the song library
     public static void searchSongName(HashFB<String, Song> songs, String criteria) {
 
         allSongTable.getItems().clear();
@@ -605,7 +590,6 @@ public class Player {
 
     }
 
-    //get all the songs from the song library and add to the song table
     public static void getDefaultList(HashFB<String, Song> songs) {
 
         allSongTable.getItems().clear();
@@ -621,7 +605,6 @@ public class Player {
 
     }
 
-    //check if the song the user wants to add to the library already exists
     public static int checkExistInPlaylist(String songName) {
 
         LinkedList<String> playlist = importData.getPlaylist();

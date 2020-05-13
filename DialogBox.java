@@ -1,4 +1,5 @@
 import java.io.FileInputStream;
+
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -8,7 +9,6 @@ import javafx.stage.*;
 
 public class DialogBox {
 
-    //a custom message/dialog box to display errors or messages to the user
     public static void box(String message) {
 
         Stage messageWindow = new Stage();

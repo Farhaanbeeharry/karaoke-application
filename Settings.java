@@ -12,7 +12,6 @@ import javafx.stage.Stage;
 
 public class Settings {
 
-    //settings for the menu so that the user can choose layout and ui mode
     public static void setting() {
 
         Stage settingsStage = new Stage();
@@ -65,7 +64,6 @@ public class Settings {
         } else if (importData.importConfig()[1].equalsIgnoreCase("dark")) {
             uiModeGroup.selectToggle(darkBtn);
         }
-        //if no button is selected, select the last one which was selected before
         uiModeGroup.selectedToggleProperty().addListener((obsVal, oldVal, newVal) -> {
             if (newVal == null) {
                 oldVal.setSelected(true);

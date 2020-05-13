@@ -3,10 +3,8 @@ import java.util.LinkedList;
 
 public class importData {
 
-    //read the song library file into a hash table
     public static HashFB<String, Song> importSongList() {
 
-        //creating a hash table
         HashFB<String, Song> songs = new HashFB<String, Song>();
 
         try {
@@ -36,7 +34,6 @@ public class importData {
 
     }
 
-    //read the playlist file into a linked list
     public static LinkedList<String> getPlaylist() {
 
         String fileName = "playlist.txt";
@@ -65,13 +62,11 @@ public class importData {
 
     }
 
-    //count the number of songs in the playlist
     public static int getPlaylistCount() {
         LinkedList<String> playlist = getPlaylist();
         return playlist.size();
     }
 
-    //read the file location from which the user wants the song library file to open
     public static String importFileLocation() {
 
         String fileName = "fileLocation.txt";
@@ -94,7 +89,6 @@ public class importData {
 
     }
 
-    //read the user settings (separated by "--")
     public static String[] importConfig() {
 
         String fileName = "config.txt";

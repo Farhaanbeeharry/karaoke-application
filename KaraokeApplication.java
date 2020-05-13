@@ -6,12 +6,12 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 
 public class KaraokeApplication extends Application {
 
-    //the main class which first process the argument input
     public static void main(String[] args) {
 
         if (args.length == 0) {
@@ -36,7 +36,6 @@ public class KaraokeApplication extends Application {
 
     }
 
-    //the main menu which contains button to all other functions
     public static void startApplication() {
 
         Stage primaryStage = new Stage();
@@ -50,7 +49,6 @@ public class KaraokeApplication extends Application {
         title.setAlignment(Pos.CENTER);
 
         try {
-            //creating an image
             Image image = new Image(new FileInputStream("images/logo.png"));
             ImageView imageView = new ImageView(image);
             imageView.setFitHeight(300);
@@ -62,7 +60,6 @@ public class KaraokeApplication extends Application {
             playPlaylist.setMinHeight(40);
             playPlaylist.setFocusTraversable(false);
             playPlaylist.setOnAction(e -> {
-                //check if the playlist is empty
                 HashFB<String, Song> songs = importData.importSongList();
                 if (importData.getPlaylistCount() == 0) {
                     DialogBox.box("There are no songs in your playlist!");
